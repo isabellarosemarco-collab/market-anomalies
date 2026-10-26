@@ -4,6 +4,10 @@
 
 By [Bella Marco](https://bellamarco.co). Sister project: [Resonance Lab](https://github.com/isabellarosemarco-collab/resonance-lab), which tests Tesla's 3-6-9 and numerology the same way.
 
+## The idea
+
+Traders swear by patterns like "stocks go up at the turn of the month" or "sell before the jobs report." I wanted to know which ones survive a fair test.
+
 ## What held up: the night before a Fed decision
 
 Buy the index at the close on the evening before a scheduled Federal Reserve (FOMC) decision, then sell at the next morning's open. Prices tend to drift up overnight while everyone waits for the announcement.
@@ -28,6 +32,17 @@ It's real, and it's small. It only fires about 8 nights a year, so it adds rough
 ## How the testing works
 
 Every idea was written down before it was run, and every result is reported, pass or fail. Costs are included. Each signal has to beat random trades on the same days of the year, survive a stricter significance bar because so many ideas were tested, and keep working in years it was never designed on. Most of the work here is about not fooling yourself.
+
+## Run it
+
+```bash
+pip install -r fed_drift_suite/requirements.txt yfinance statsmodels
+python structural_anomalies_tester.py     # calendar-effect battery
+python edge_hunt.py                       # trend and seasonal strategies vs. buy-and-hold
+python -m fed_drift_suite.core.analytics  # the Fed-eve result
+```
+
+All prices come from Yahoo Finance. The Fed-eve bot can paper trade through Alpaca, but it ships switched off with no keys.
 
 ## Layout
 
