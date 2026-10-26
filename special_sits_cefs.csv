@@ -1,0 +1,70 @@
+ticker,name,px,nav,disc%,avg_disc%,z1y,to_NAV%,vol,cap_$M,exp%,term,activist
+HIO,Western Asset High Income Oppo,3.26,3.77,-12.7,-7.1,-4.11,15.6,4252770,310,0.93,,Karpus Management
+WDI,Western Asset Diversified Inc ,11.85,13.61,-12.1,-5.2,-3.23,14.9,2119250,615,4.25,yes,Karpus Management
+DHF,BNY Mellon High Yield Strategi,2.21,2.61,-14.6,-9.9,-2.63,18.1,3481980,161,3.18,,Saba Capital
+DMO,Western Asset Mortgage Opp Fun,9.47,10.83,-12.4,-4.5,-2.61,14.4,490170,108,7.87,,Karpus Management
+EHI,Western Asset Global High Inco,5.38,6.19,-12.3,-7.1,-2.42,15.1,1103750,163,3.49,,Karpus Management
+NHS,Neuberger High Yield Strategie,5.44,6.32,-13.4,-3.5,-2.14,16.2,2116110,228,3.39,,Bulldog Investors
+GAM,General American Investors,64.48,73.85,-12.2,-10.7,-1.93,14.5,247740,1537,1.07,,Saba Capital
+GLO,Clough Global Opportunities,5.37,6.19,-13.2,-11.4,-1.9,15.3,1488040,230,3.54,,Saba Capital
+GDV,Gabelli Dividend & Income,28.78,32.8,-12.1,-10.8,-1.83,14.0,1043930,2495,1.83,,Saba Capital
+GLV,Clough Global Dividend and Inc,5.83,6.76,-13.8,-12.0,-1.68,16.0,405420,72,3.06,,Saba Capital
+RMT,Royce Micro-Cap Trust,13.39,15.32,-12.6,-11.4,-1.59,14.4,1201570,726,1.39,,Saba Capital
+JOF,Japan Smaller Cap Fund,12.41,14.3,-13.2,-10.8,-1.51,15.2,773250,316,2.09,,Saba Capital
+IIF,Morgan Stanley India Investmen,21.91,25.26,-12.3,-11.1,-1.51,15.3,321990,206,1.35,,Saba Capital
+CAF,Morgan Stanley China A Share,18.64,22.22,-15.8,-14.1,-0.81,19.2,366340,249,1.52,,Saba Capital
+RGT,"Royce Global Trust, Inc.",14.5,17.17,-15.5,-14.9,-0.63,18.4,201660,95,1.35,,Saba Capital
+PCF,High Income Securities,5.33,6.25,-13.9,-12.9,-0.58,17.3,785400,100,1.65,,Saba Capital
+BTX,BlackRock Tech and Private Equ,8.98,10.23,-12.1,-13.8,0.73,13.9,7606210,1048,1.46,yes,Saba Capital
+HFRO,Highland Opportunities and Inc,6.9,11.64,-39.7,-43.9,1.06,68.7,1330910,381,2.18,,Saba Capital
+MXE,Mexico Equity & Income,12.9,15.92,-16.6,-17.9,1.22,23.4,56330,57,2.13,,Saba Capital
+ACP,abrdn Income Credit Strategies,4.46,5.19,-13.4,-5.7,-4.28,16.4,5733430,560,3.94,,-
+FTF,Franklin Limited Duration Inco,5.35,6.19,-12.6,-8.2,-3.43,15.7,1926950,216,3.66,,-
+PTA,Cohen & Steers Tax-adv Prd Sec,17.3,19.79,-12.0,-6.9,-3.41,14.4,1480880,956,4.36,,-
+DFP,Flah & Crum Dynamic Pref & Inc,18.97,21.78,-12.7,-7.4,-3.34,14.8,534930,390,4.3,,-
+GUG,Guggenheim Active Allocation F,13.79,16.09,-13.2,-6.2,-3.3,16.7,834710,455,3.19,,-
+FT,Franklin Universal Trust,7.11,8.21,-12.8,-8.4,-3.15,15.5,453500,179,2.99,,-
+JGH,Nuveen Global High Income Fund,11.65,13.35,-12.3,-7.8,-3.0,14.6,999710,328,3.37,,-
+BWG,BrandywineGLOBAL – Global Inc ,7.08,8.2,-13.4,-8.8,-2.94,15.9,757950,119,4.62,,-
+EVV,Eaton Vance Limited Duration I,8.41,9.69,-12.8,-6.7,-2.93,15.2,3404480,977,4.04,,-
+JLS,Nuveen Mortgage and Income Fun,16.15,18.53,-12.8,-5.4,-2.83,14.7,196580,88,3.07,,-
+ARDC,Ares Dynamic Credit Allocation,11.51,13.2,-12.6,-6.9,-2.77,14.7,1148380,276,5.26,,-
+CEE,The Central and Eastern Europe,19.0,22.45,-13.6,-2.6,-2.73,18.2,265200,124,1.26,,-
+RA,Brookfield Real Assets Income ,11.71,13.52,-12.3,-9.4,-2.59,15.5,1742170,647,3.34,,-
+EAD,Allspring Income Opps,6.02,6.95,-12.8,-8.3,-2.56,15.4,1946070,356,2.95,,-
+FLC,Flah&Crum Total Return Fund,15.73,18.08,-12.2,-8.6,-2.55,14.9,229550,164,4.56,,-
+VVR,Invesco Senior Income,2.85,3.34,-14.4,-10.0,-2.47,17.2,9603440,439,4.89,,-
+CCIF,Carlyle Credit Income Ord,2.24,3.23,-26.5,-11.0,-2.41,44.2,1289400,47,11.36,,-
+GOF,Guggenheim Strategic Opp Fund,8.43,10.02,-15.4,6.0,-2.34,18.9,17575300,1884,1.97,,-
+OPP,RiverNorth/DoubleLine Strategi,6.92,7.94,-12.2,-8.8,-2.31,14.7,1063800,173,2.8,yes,-
+TWN,Taiwan Fund,101.27,127.06,-21.1,-16.0,-2.28,25.5,317100,581,1.32,,-
+PSF,Cohen & Steers Select Preferre,18.38,21.04,-12.1,-8.6,-2.28,14.5,385710,221,3.76,,-
+HYT,BlackRock Corporate High Yield,7.74,8.88,-12.3,-6.5,-2.24,14.7,8381550,1492,2.33,,-
+BRW,Saba Capital Income & Opportun,6.03,7.21,-15.0,-11.1,-2.22,19.6,2711180,313,5.82,,-
+SABA,Saba Capital Income & Ops Fund,7.98,9.48,-15.9,-12.7,-2.17,18.8,704120,215,4.58,,-
+EFT,Eaton Vance Floating-Rate Inco,10.38,11.95,-13.1,-9.7,-2.15,15.1,1132560,276,4.45,,-
+EFR,Eaton Vance Senior Floating Ra,10.22,11.82,-13.5,-10.2,-2.12,15.7,1428140,302,3.26,,-
+CPZ,Calamos L/S Equity & Dynamic I,12.69,14.89,-14.8,-10.5,-2.08,17.3,777890,249,4.38,,-
+ASG,Liberty All-Star Growth,5.04,5.86,-13.5,-10.7,-2.06,16.3,2587810,321,1.12,,-
+BGX,Blackstone Long-Short Credit I,10.51,12.28,-14.3,-11.2,-1.98,16.8,694240,134,4.65,,-
+DHY,UBS Asset Management High Yiel,1.62,1.89,-13.8,-7.3,-1.95,16.7,6379190,168,3.62,,-
+JQC,Nuveen Credit Strategies Incom,4.58,5.29,-13.3,-9.9,-1.86,15.5,7695070,677,5.09,,-
+DPG,Duff & Phelps Utility and Infr,12.94,14.86,-12.5,-10.7,-1.86,14.8,719100,466,3.34,,-
+PDX,PIMCO Dynamic Income Strategy ,20.14,23.05,-12.3,-9.9,-1.83,14.4,1254520,900,3.01,yes,-
+TDF,Templeton Dragon,9.92,11.9,-15.8,-14.2,-1.74,20.0,717470,249,1.21,,-
+STEW,SRH Total Return Fund,17.6,22.94,-23.3,-21.7,-1.72,30.3,787340,1697,1.42,,-
+JFR,Nuveen Floating Rate Income,7.24,8.27,-12.2,-9.2,-1.7,14.2,7536660,1165,4.78,,-
+CIK,UBS Asset Management Income,2.33,2.66,-12.0,-4.8,-1.68,14.2,4823950,128,3.7,,-
+EVF,Eaton Vance Senior Income,4.83,5.63,-14.2,-10.4,-1.67,16.6,761930,88,2.76,,-
+PDCC,Pearl Diver Credit Company Inc,8.67,10.86,-19.1,-6.1,-1.66,25.3,58700,60,8.24,,-
+KF,Korea Fund,65.69,80.22,-16.5,-13.6,-1.57,22.1,201520,273,1.21,,-
+SCD,LMP Capital and Income,14.88,16.94,-12.1,-9.6,-1.56,13.8,778320,341,2.39,,-
+SPE,Special Opportunities,12.95,15.3,-14.4,-11.1,-1.54,18.1,347090,138,1.86,,-
+USA,Liberty All-Star Equity,5.83,6.67,-12.1,-10.2,-1.38,14.4,12661470,1797,0.91,,-
+EEA,European Equity Fund,10.58,12.61,-16.1,-14.1,-1.31,19.2,292720,72,1.42,,-
+EIC,Eagle Point Income Co Inc,9.41,12.43,-22.5,-17.3,-1.23,32.1,1449990,217,6.36,,-
+HGLB,Highland Global Allocation Fun,7.01,11.09,-35.8,-30.8,-1.21,58.2,765100,165,1.35,,-
+SWZ,Total Return Securities Fund,5.84,7.32,-20.0,-16.6,-1.12,25.3,666130,76,2.21,,-
+OCCI,OFS Credit Company Inc,2.27,3.22,-26.2,-15.4,-1.08,41.9,2776160,67,13.31,,-
+ZTR,Virtus Total Return Fund Inc,6.09,6.92,-12.1,-10.8,-1.08,13.6,1899430,304,3.67,,-
+HERZ,Herzfeld Credit Income Fund,15.57,19.13,-17.2,-12.6,-1.02,22.9,128750,303,4.33,,-

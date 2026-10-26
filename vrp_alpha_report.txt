@@ -1,0 +1,252 @@
+$XIV: possibly delisted; no timezone found
+$XIV: possibly delisted; no timezone found
+================================================================================================================
+VARIANCE RISK PREMIUM — is IV minus RV an investable premium, or rent paid for tail exposure?
+================================================================================================================
+  data: 1990-01-02 .. 2026-09-24, 9246 sessions; VIX from CBOE's official history, returns from ^SPX
+================================================================================================================
+0. DATA GATE
+================================================================================================================
+  SHORT-VOL ETP GATE — can the brief's VXX/UVXY/SVXY proxies be backtested at all?
+
+    XIV    NO DATA                                      (TypeError)
+           terminated 2018-02-05 after -96% in one session
+    SVXY   2011-10-04 .. 2026-09-25, 3766 bars           5 splits
+           target leverage cut from -1.0x to -0.5x on 2018-02-28
+    VXX    2018-01-25 .. 2026-09-25, 2179 bars           3 splits
+           original 2009 ETN matured Jan 2019; feed carries only the successor
+    UVXY   2011-10-04 .. 2026-09-25, 3766 bars          13 splits
+           target leverage cut from 2.0x to 1.5x on 2018-02-28
+
+    ALL FOUR ARE UNUSABLE FOR A 2010-PRESENT TEST, FOR THREE DIFFERENT REASONS.
+      Survivorship: XIV is gone from the feed. It is not that XIV is hard to get -- it is that the
+      instrument which would have registered the catastrophe no longer exists to be measured, so any
+      surviving-ETP backtest is conditioned on not having blown up.
+      Spliced strategies: SVXY and UVXY both changed their target leverage in Feb 2018, so a continuous
+      price series concatenates two different funds. This is the same class of error as the vendor
+      splicing two companies into one ticker in the index study, and it is equally invisible to a gap check.
+      Missing history: the feed's VXX begins 2018, so the 2009-2017 period simply is not there.
+    Therefore the tradeable test below is built synthetically from VIX and SPX, which have no such gaps,
+    and the ETP route is reported as untestable rather than tested badly.
+
+================================================================================================================
+1. THE PURE PREMIUM — is VIX above realized vol, and by how much, and does it mean anything?
+================================================================================================================
+  THE BRIEF'S DEFINITION AND THE TRADEABLE ONE, SIDE BY SIDE (2010-present, daily observations).
+  The first is VIX minus TRAILING realized vol. The second is VIX minus the realized vol that
+  FOLLOWS. Only the second is a premium anyone can collect.
+
+  VIX - trailing RV21 (brief's spelling) n= 4207  mean   +3.73 vol pts  HAC t +12.76  median   +4.09  >0   87%  sd   5.21  min   -50.32
+  VIX - FORWARD RV21 (tradeable)         n= 4186  mean   +3.74 vol pts  HAC t  +8.74  median   +4.62  >0   84%  sd   7.32  min   -71.96
+  variance-swap P&L, (K^2-RV^2)/2K       n= 4186  mean   +2.04 vol pts  HAC t  +2.67  median   +3.90  >0   84%  sd  13.21  min  -252.20
+
+  The third row is the same forward premium priced as the instrument that actually matches VIX.
+  It is smaller than the linear spread and far more negatively skewed, because a short variance
+  swap's loss grows with the SQUARE of realized vol. That gap is the whole risk of the trade.
+
+  NON-OVERLAPPING MONTHLY SAMPLES — the check that does not depend on the HAC kernel.
+  Daily forward-looking windows share 20 of 21 days, so the ~4,000 daily points are about 190
+  independent months. Below, each observation is a distinct month; all 21 possible grid offsets
+  are reported because a single offset is a choice nobody should have to trust.
+    VIX - forward RV21         n~ 199 months   mean  +3.74 (offsets +3.40 to +4.02)   t +7.23 (offsets +6.40 to +8.13)
+    variance-swap P&L          n~ 199 months   mean  +2.04 (offsets +1.50 to +2.58)   t +2.59 (offsets +1.10 to +4.04)
+
+  BY REGIME. The brief's window starts in 2010, which is a choice with consequences.
+
+    2010-2019 (the brief's calm sample)  (2010-01-04 .. 2019-12-31)
+        VIX - trailing RV                n= 2516  mean   +3.64 vol pts  HAC t +14.42  median   +3.95  >0   87%  sd   3.88  min   -16.16
+        VIX - forward RV                 n= 2516  mean   +3.68 vol pts  HAC t  +9.45  median   +4.53  >0   84%  sd   5.44  min   -28.33
+        variance-swap P&L                n= 2516  mean   +2.45 vol pts  HAC t  +5.39  median   +3.78  >0   84%  sd   6.25  min   -51.25
+
+    2020-2026 (covid, 2022, Aug 2024)  (2020-01-02 .. 2026-09-24)
+        VIX - trailing RV                n= 1691  mean   +3.87 vol pts  HAC t  +6.21  median   +4.38  >0   87%  sd   6.73  min   -50.32
+        VIX - forward RV                 n= 1670  mean   +3.83 vol pts  HAC t  +4.26  median   +4.79  >0   85%  sd   9.47  min   -71.96
+        variance-swap P&L                n= 1670  mean   +1.43 vol pts  HAC t  +0.80  median   +4.10  >0   85%  sd  19.45  min  -252.20
+
+    1990-2009 (excluded by the brief)  (1990-01-02 .. 2009-12-31)
+        VIX - trailing RV                n= 5018  mean   +4.37 vol pts  HAC t +19.82  median   +4.56  >0   91%  sd   4.21  min   -33.86
+        VIX - forward RV                 n= 5039  mean   +4.39 vol pts  HAC t +13.21  median   +4.78  >0   87%  sd   5.95  min   -49.91
+        variance-swap P&L                n= 5039  mean   +3.23 vol pts  HAC t  +8.01  median   +4.04  >0   87%  sd   6.99  min   -97.66
+
+  THE 2008 OMISSION MATTERS, BUT NOT IN THE DIRECTION EVERY SHORT-VOL WARNING ASSUMES, AND THIS
+  IS THE MOST COUNTERINTUITIVE NUMBER IN THE STUDY. The obvious objection to a 2010 start date is
+  that it excludes the financial crisis, so the sample flatters the trade. Measured, the opposite
+  is true: 1990-2009 INCLUDING 2008 is the better half, and section 2's full-history panel gives
+  it a Sharpe. The reason is visible in the regime rows above -- in 2008 volatility rose ahead of
+  itself, so swaps kept being struck at high VIX into realized vol that, however awful, was
+  already partly priced. The catastrophe for this trade is not high volatility; it is volatility
+  exploding from a CALM base, because that is when the strike you sold is low. On 2020-02-14 VIX
+  closed at 13.7 against a forward realized vol of 84.2. All twelve of the worst single days in
+  thirty-six years are in Feb-Mar 2020, and none are in 2008.
+
+================================================================================================================
+2. THE TRADEABLE HARVEST — filtered short variance, marked daily, vs SPY buy-and-hold
+================================================================================================================
+  P&L is in vega-normalized volatility points. Sharpe, maxDD and Calmar are all leverage-
+  invariant, so no margin assumption is made anywhere — see strategy.perf for why that matters.
+
+  unfiltered short variance          ann   +18.48  sd   30.62  Sharpe +0.60  maxDD   -174.25  Calmar +0.11  worst day   -56.02  skew -12.6  kurt   277.2
+  gate: VRP>0 and VIX<30             ann   +13.31  sd   23.49  Sharpe +0.57  maxDD   -133.83  Calmar +0.10  worst day   -29.70  skew  -9.1  kurt   142.6
+  gate + liquidate on trip           ann   +11.30  sd   17.72  Sharpe +0.64  maxDD    -62.47  Calmar +0.18  worst day   -29.70  skew  -9.9  kurt   183.8
+  gate, VIX<20 (tighter)             ann    +7.20  sd   18.72  Sharpe +0.38  maxDD   -102.52  Calmar +0.07  worst day   -29.70  skew -10.3  kurt   189.8
+  SPY buy-and-hold (log %/day)       ann   +11.48  sd   17.21  Sharpe +0.67  maxDD    -41.44  Calmar +0.28  worst day   -12.77  skew  -0.6  kurt    13.5
+
+  DAYS IN THE MARKET, which is how the filter buys its Sharpe:
+    unfiltered short variance          gate open  100% of days,  4206 swaps opened
+    gate: VRP>0 and VIX<30             gate open   82% of days,  3456 swaps opened
+    gate + liquidate on trip           gate open   82% of days,  3456 swaps opened
+    gate, VIX<20 (tighter)             gate open   64% of days,  2673 swaps opened
+
+  COST SENSITIVITY on the gated variant. One vol point of round-trip cost is a realistic upper
+  bound for a 1-month SPX variance swap or an ATM straddle plus daily delta-hedge slippage.
+    cost 0.00 vol pts   ann  +18.24  Sharpe +0.78  maxDD  -133.33  Calmar +0.14
+    cost 0.25 vol pts   ann  +15.77  Sharpe +0.67  maxDD  -133.58  Calmar +0.12
+    cost 0.50 vol pts   ann  +13.31  Sharpe +0.57  maxDD  -133.83  Calmar +0.10
+    cost 1.00 vol pts   ann   +8.38  Sharpe +0.36  maxDD  -140.10  Calmar +0.06
+    cost 2.00 vol pts   ann   -1.48  Sharpe -0.06  maxDD  -161.05  Calmar -0.01
+
+  OUT-OF-SAMPLE SPLIT. The filter's thresholds (VRP>0, VIX<30) were not fitted here, but they
+  are conventional numbers chosen with full knowledge of 2018 and 2020, so the split still matters.
+  2010-2017 (in-sample-ish)          ann   +19.82  sd   18.53  Sharpe +1.07  maxDD    -39.44  Calmar +0.50  worst day   -23.15  skew  -8.5  kurt   134.8
+  2018-2026 (after volmageddon)      ann    +7.21  sd   27.27  Sharpe +0.26  maxDD   -133.83  Calmar +0.05  worst day   -29.70  skew  -8.7  kurt   123.9
+
+  THE FULL HISTORY, WHICH REVERSES THE USUAL WARNING. Same gated strategy, same cost, run over
+  the two halves of the available data. The half containing the financial crisis is the good half.
+  1990-2009 (incl. 2008)             ann   +27.73  sd   13.27  Sharpe +2.09  maxDD    -33.74  Calmar +0.82  worst day   -18.59  skew  -5.9  kurt    84.9
+  2010-2026 (the brief's window)     ann   +13.31  sd   23.49  Sharpe +0.57  maxDD   -133.83  Calmar +0.10  worst day   -29.70  skew  -9.1  kurt   142.6
+  1990-2026 (everything)             ann   +21.25  sd   18.65  Sharpe +1.14  maxDD   -133.83  Calmar +0.16  worst day   -29.70  skew  -9.5  kurt   176.9
+    for scale: 2008-08..2008-12 cost -31.6 vol pts (worst day -12.4) while VIX went 23 -> 81
+    March 2020 cost nearly four times as much (section 3) and the two episodes peaked at almost
+    exactly the same VIX, 81 against 83. What differed was the floor they started from: swaps were
+    already being struck in the 20s in 2008, and at 14 in February 2020.
+
+================================================================================================================
+2b. DOES THE BRIEF'S FILTER CARRY ANY INFORMATION? — the decisive test, and it is one line of math
+================================================================================================================
+  Every variant above differs only in WHEN it is willing to sell variance. So before comparing
+  Sharpes, ask whether the gate's inputs predict the payoff at all. Splitting the same payoff by
+  each gate condition:
+
+      VRP_bwd > 0  (filter says GO)      n= 3621  mean   +1.92 vol pts  HAC t  +2.31  median   +3.84  >0   85%  sd  13.67  min  -252.20
+      VRP_bwd <= 0 (filter says STOP)    n=  565  mean   +2.81 vol pts  HAC t  +3.39  median   +4.43  >0   84%  sd   9.77  min  -120.43
+      VIX < 30     (filter says GO)      n= 3930  mean   +1.92 vol pts  HAC t  +2.79  median   +3.80  >0   84%  sd  12.69  min  -252.20
+      VIX >= 30    (filter says STOP)    n=  256  mean   +3.97 vol pts  HAC t  +1.22  median   +7.86  >0   93%  sd  19.46  min  -120.43
+      full gate PASSES                   n= 3436  mean   +1.85 vol pts  HAC t  +2.44  median   +3.75  >0   84%  sd  13.25  min  -252.20
+      full gate FAILS                    n=  750  mean   +2.92 vol pts  HAC t  +2.27  median   +4.86  >0   87%  sd  12.99  min  -120.43
+
+  CORRELATIONS, which say the same thing without the subsetting:
+    corr(VRP_bwd, variance-swap payoff) = +0.002
+    corr(VIX,     variance-swap payoff) = +0.071
+    corr(VRP_bwd, VRP_fwd)              = +0.003
+
+  THE GATE IS NOT MERELY USELESS, IT SELECTS THE WORSE HALF, AND THE REASON IS MECHANICAL. The days the
+  gate rejects pay MORE than the days it accepts, and they pay it with a SHALLOWER tail. That is not noise
+  in one subsample; it follows from what VIX is. VIX is the strike. Selling variance at VIX 35 is selling
+  insurance dear, and volatility mean-reverts downward from panic, so those are the best sales anyone ever
+  makes. Selling at VIX 12 is selling it cheap with the whole distance to the upside still available. The
+  brief's rule -- sell only when things are calm -- systematically sells at the lowest strikes and stands
+  aside at the highest, which is the wrong side of the only variable that matters.
+
+  It gets worse on the risk side. The -252 worst observation sits INSIDE the gate-passes bucket and the
+  gate-fails bucket's worst is -120. The tail-risk gate does not reduce tail risk; the tail lives almost
+  entirely among the trades the gate approves, because a catastrophe requires a low strike and a low strike
+  is exactly what the gate insists on. And the VRP>0 condition cannot help even in principle: it is
+  measured above at a correlation of +0.003 with the forward premium it is standing in for. Conditioning on
+  a variable independent of the payoff changes the number of trades and nothing else.
+
+================================================================================================================
+3. THE TAIL — what the gate cannot stop
+================================================================================================================
+  Total P&L 2010-present, gated: +222.2 vol points over 4207 sessions.
+
+  THE WORST 21-DAY STRETCHES, gated strategy:
+    to 2020-03-18     -123.13 vol pts   =  -55.4% of everything the strategy ever made
+    to 2020-03-16     -122.97 vol pts   =  -55.3% of everything the strategy ever made
+    to 2020-03-17     -122.74 vol pts   =  -55.2% of everything the strategy ever made
+    to 2020-03-19     -121.11 vol pts   =  -54.5% of everything the strategy ever made
+    to 2020-03-20     -120.37 vol pts   =  -54.2% of everything the strategy ever made
+    to 2020-03-23     -118.94 vol pts   =  -53.5% of everything the strategy ever made
+
+  WHAT THE GATE ACTUALLY PREVENTED. The gate blocks OPENING when VIX>30. It cannot close the
+  swap sold three days earlier at VIX 14, and volatility gaps rather than ramping through the
+  trigger. Comparing the two gated variants isolates that:
+    gate only (as specified)       ann  +13.31  Sharpe +0.57  maxDD  -133.83  worst day  -29.70
+    gate + liquidate positions     ann  +11.30  Sharpe +0.64  maxDD   -62.47  worst day  -29.70
+
+  THE KEY EVENTS, day by day, gated strategy:
+    Feb 2018 volmageddon         2018-01-29 .. 2018-02-12   P&L   -24.53 vol pts   worst day  -29.70   VIX 13 -> 37
+    Mar 2020 covid               2020-02-19 .. 2020-03-25   P&L  -121.51 vol pts   worst day  -28.98   VIX 14 -> 83
+    Aug 2024 yen carry unwind    2024-07-29 .. 2024-08-09   P&L    -5.63 vol pts   worst day  -16.43   VIX 16 -> 39
+
+  HOW MANY GOOD MONTHS ONE BAD MONTH COSTS:
+    median positive month +3.26 vol pts; worst month -61.55; ratio 19x
+    so one worst-case month erases about 19 median good months.
+
+================================================================================================================
+VERDICT
+================================================================================================================
+
+  THE PREMIUM IS REAL. IT IS NOT AN EDGE. Those are different claims and the study separates them.
+
+  1. THE PURE PREMIUM TEST — CONFIRMED, AND IT IS THE ONLY HYPOTHESIS THAT SURVIVES.
+     VIX exceeds trailing RV21 on 87% of days since 2010, mean +3.73 vol points, HAC t +12.76. The brief
+     asked for that number and it is as strong as advertised. But the tradeable version -- VIX against the
+     realized vol that FOLLOWS -- is what a seller collects, and priced as the instrument VIX actually
+     represents, (K^2-RV^2)/2K, the premium is +2.04 vol points at HAC t +2.67. Still positive, roughly
+     half the headline, and the t-stat falls by a factor of five once overlapping windows are paid for.
+     Non-overlapping monthly sampling across all 21 grid offsets agrees on the mean (+2.04) but its t-stat
+     ranges from +1.10 to +4.04 depending purely on which day of the month you sample -- so "significant"
+     is a function of an arbitrary choice. Stability across regimes fails the brief's own test: 2010-2019
+     mean +2.45 at t +5.39, 2020-2026 mean +1.43 at t +0.80. The premium did not merely shrink after 2020,
+     it stopped being measurable.
+
+  2. THE TRADEABLE PROXY WITH REGIME FILTER — REJECTED, TWICE OVER, AND THE SECOND REASON IS FATAL.
+     The ETP route cannot be tested at all: XIV is absent from the data because it died, SVXY and UVXY both
+     re-levered in Feb 2018 so their price histories splice two different funds, and the feed's VXX starts
+     in 2018. Any backtest on the survivors is conditioned on not having blown up.
+     Built synthetically instead, the gated harvest earns ann +13.31 at Sharpe +0.57, maxDD -133.83,
+     Calmar +0.10, with skew -9.1 and kurtosis 142.6. SPY buy-and-hold over the same window: Sharpe +0.67,
+     Calmar +0.28, skew -0.6. Short variance loses to doing nothing on both risk-adjusted measures, by 3x
+     on Calmar, while carrying a fifteenth the symmetry. There is no version of this that is worth the
+     operational burden of rolling a monthly swap.
+     And the filter itself is backwards. The days the gate rejects pay +2.92 against the +1.85 it accepts,
+     the worst single observation in the sample sits inside the gate-approved bucket, and the correlation
+     between the gate's signal and its own payoff is +0.002. The gate cannot select good trades because
+     VIX is the strike: it is designed to sell cheap insurance and refuse the expensive kind.
+
+  3. EXECUTION AND FRICTIONS — THE STRATEGY DIES WELL INSIDE REALISTIC COST.
+     At zero cost the gated harvest prints Sharpe +0.78. At 0.5 vol points, +0.57. At 1.0, +0.36. At 2.0
+     vol points -- a defensible round-trip for a retail-accessible monthly variance exposure once the
+     straddle spread and daily delta-hedge slippage are counted -- it is -0.06, i.e. the entire premium is
+     the transaction cost. A strategy whose survival depends on institutional execution is not available at
+     the size this account trades.
+     Out of sample it decays without needing any cost assumption: 2010-2017 Sharpe +1.07, Calmar +0.50;
+     2018-2026 Sharpe +0.26, Calmar +0.05.
+
+  ANSWERING THE QUESTION AS ASKED: does the VRP survive out-of-sample as an investable premium, or does
+  tail risk eat the entire historical spread?
+     Tail risk eats it, and the arithmetic is not close. The worst 21-day stretch, ending 2020-03-18, cost
+     -123.13 vol points against +222.2 earned across all 4,207 sessions -- one month erased 55% of
+     everything the strategy ever made, and the six worst stretches in sixteen years are all the same
+     month. One worst month costs about 19 median good months. The gate cannot prevent this: it blocks
+     opening at VIX>30, but the damage is done by the swap sold at VIX 14 three days earlier, and adding
+     forced liquidation halves the drawdown (-62 vs -134) while leaving the worst DAY identical at -29.70.
+     Volatility gaps through the trigger; there is no exit at the level you chose.
+
+  THE FINDING WORTH KEEPING, WHICH IS NOT THE ONE THE BRIEF EXPECTED. The instinct that a 2010 start date
+  flatters a short-vol study is wrong. 1990-2009, crisis included, runs at Sharpe +2.09 and Calmar +0.82
+  against +0.57 and +0.10 for 2010-2026; the whole autumn of 2008 cost -31.6 vol points while VIX went 23
+  to 81, and every one of the twelve worst days in thirty-six years falls in Feb-Mar 2020. High vol is
+  not the risk to selling volatility -- high volatility means high strikes. The risk is a violent repricing
+  from a calm base, which is unforecastable by construction, because if it were forecastable the strike
+  would not have been calm. That is why the premium exists and why no regime filter built from VIX and
+  trailing RV can capture it.
+
+  WHERE THIS LEAVES THE THREE STUDIES. Index reconstitution: the flow is real, the alpha is arbitraged.
+  Gamma pinning: the mechanism was misidentified as drift; a placebo grid on prices where no option is
+  listed reproduced the whole result. VRP: the premium is measurable, positive, and genuinely economic --
+  it is compensation for exactly the risk that showed up in March 2020 -- and it still loses to holding
+  SPY. Three for three, and each failed for a different reason, which is more informative than three
+  variations of the same one. The pattern is worth naming: every one of these had a correct mechanism
+  attached to an untradeable implementation, and in all three cases the disqualifying fact was cheap to
+  measure and available before the pipeline was built.

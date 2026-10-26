@@ -1,0 +1,28 @@
+# Lower bounds rather than exact pins: this is an application, not a library, and the versions below
+# are the ones the suite is verified against. Pin exactly (pip freeze) before a production deploy.
+
+# --- shared core ---------------------------------------------------------------
+pandas>=2.2           # 3.0.6 verified
+numpy>=1.26           # 2.5.3 verified
+pydantic>=2.6         # 2.13.5 verified — v1 will not work, these are v2 models
+pytz>=2024.1
+requests>=2.31
+statsmodels>=0.14     # Newey-West t-statistics; analytics degrades to a plain t without it
+
+# --- research dataset rebuild (core/build_dataset.py only) ---------------------
+yfinance>=0.2.40      # 1.7.0 verified. Not needed to run either layer — only to rebuild the CSVs.
+beautifulsoup4>=4.12  # FOMC calendar scrape
+lxml>=5.0
+
+# --- layer 1: personal trader --------------------------------------------------
+alpaca-py>=0.20       # 0.44.0 verified
+schedule>=1.2
+python-dotenv>=1.0
+
+# --- layer 2: commercial API ---------------------------------------------------
+fastapi>=0.110        # 0.141.1 verified
+uvicorn[standard]>=0.29
+httpx>=0.27           # webhook delivery, and the test client
+
+# --- tests ---------------------------------------------------------------------
+pytest>=8.0

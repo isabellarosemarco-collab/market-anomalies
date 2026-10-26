@@ -1,0 +1,11 @@
+rule,yrs,CAGR%,OOS_CAGR%,vol%,sharpe,maxDD%,OOS_maxDD%,trades/yr,yrs_to_100x,note
+BUY & HOLD SPY (wide window),20.7,11.06,14.54,15.1,0.77,-50.8,-23.9,0.0,43.9,the number to beat
+BUY & HOLD SPY (core window),21.9,10.93,14.54,14.7,0.78,-50.8,-23.9,0.0,44.4,the number to beat
+E1 trend top-3 of 10,19.7,7.58,8.66,12.4,0.65,-23.3,-21.4,4.9,63.0,cash when nothing beats cash
+E1 trend top-5 of 10,19.7,8.64,9.38,10.7,0.83,-15.1,-13.6,2.6,55.5,cash when nothing beats cash
+E1 trend top-2 of 4,20.9,8.29,8.04,11.5,0.75,-21.1,-21.1,2.9,57.8,cash when nothing beats cash
+E2 SPY vol-targeted 12%,20.7,7.97,10.63,11.1,0.75,-30.0,-19.4,1.6,60.0,"de-risk only, no leverage"
+E3 Halloween (Nov-Apr),20.7,6.36,6.55,10.8,0.62,-30.5,-19.4,2.0,74.7,no flow mechanism — this is the control
+E4 buyback window (mo 2-3 of qtr),20.7,7.05,7.25,12.9,0.6,-38.7,-18.6,7.9,67.6,
+  |- inverse (mo 1 of qtr),20.7,3.41,6.46,8.1,0.45,-20.7,-12.3,7.9,137.2,if E4 is real this should be much worse
+E5 inverse-vol risk parity,19.7,7.03,6.58,9.9,0.74,-24.6,-21.7,0.7,67.8,zero forecasting

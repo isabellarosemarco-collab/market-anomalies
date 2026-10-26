@@ -1,0 +1,366 @@
+================================================================================================================
+POST-OPEN MACRO — is pre-announcement drift general, or is it the rate decision alone?
+================================================================================================================
+  2949 sessions, 2015-01-05 .. 2026-09-25, names SPY, QQQ, IWM, dividend-adjusted, 2.0 bp round trip
+================================================================================================================
+0. THE STRUCTURAL SCREEN — which of the brief's siblings actually clear the 09:31 exit?
+================================================================================================================
+  CANDIDATE EVENT CALENDARS, with the release clock that decides whether each qualifies:
+  event             time ET  clean?     n  span                    per-year  weekday mix
+  MINUTES             14:00     YES    96  2015-02-18..2026-08-19      8.3   Wed 86, Tue 4, Thu 3
+  ISM_MFG             10:00     YES   140  2015-02-02..2026-09-01     12.1   Mon 54, Tue 26, Wed 21
+  ISM_SVC             10:00     YES   138  2015-01-06..2026-09-03     11.8   Wed 54, Thu 29, Tue 20
+  HUMPHREY            10:00     YES    23  2015-02-24..2026-07-14      2.0   Tue 14, Wed 9
+  QRA_ESTIMATES       15:00     YES    47  2015-02-02..2026-08-03      4.1   Mon 47
+  QRA_STATEMENT       08:30      NO    47  2015-02-04..2026-08-05      4.1   Wed 47
+
+  'clean' means the release lands after the 09:31 exit, so the 15:59->09:31 window
+  contains the pre-event uncertainty and none of the reaction. QRA_STATEMENT is the one
+  sibling that fails: 08:30 is inside the window, exactly like CPI and NFP.
+
+  Sessions lost because the release fell on a non-trading day, and total scheduled:
+    MINUTES          scheduled   96   dropped  0   usable   96
+    ISM_MFG          scheduled  140   dropped  0   usable  140
+    ISM_SVC          scheduled  141   dropped  3   usable  138
+    HUMPHREY         scheduled   23   dropped  0   usable   23
+    QRA_ESTIMATES    scheduled   47   dropped  0   usable   47
+    QRA_STATEMENT    scheduled   47   dropped  0   usable   47
+    FOMC             scheduled   93   dropped  0   usable   93
+    CPI              scheduled  141   dropped  2   usable  139
+    NFP              scheduled  141   dropped  4   usable  137
+
+  MONTH POSITION OF EACH EVENT EVE — read this before any result below.
+  ISM Manufacturing prints on the first business day, so its eve is the LAST trading day of
+  the prior month. That is the turn-of-the-month anomaly's home address, and it accounts for
+  half of the ISM sample the brief is counting on for frequency.
+
+  event             median tdom  median trev  most common bucket
+  MINUTES                    12           12  {'mid': 56, '+3': 8, '+2': 8}
+  ISM_MFG                     1           21  {'+1': 140}
+  ISM_SVC                     3           19  {'+3': 136, '+2': 2}
+  HUMPHREY                   10           13  {'mid': 15, '-4': 2, '-2': 1}
+  QRA_ESTIMATES               2           19  {'+1': 21, '-2': 7, '-1': 6}
+  QRA_STATEMENT               3           18  {'+3': 21, '+1': 7, '+2': 6}
+  FOMC                       13            9  {'mid': 46, '-3': 17, '+1': 7}
+
+================================================================================================================
+1. DO THE DATES SURVIVE CONTACT WITH INTRADAY DATA? — validating the one rule-based calendar
+================================================================================================================
+  Minutes, testimony and refunding dates come from the issuer. ISM dates are generated from
+  the first/third-business-day rule because ISM publishes no free archive, so they are the
+  one input that could be systematically wrong. The test: ES futures trade continuously, so
+  on a correctly dated ISM day the 10:00-11:00 bar -- which contains the 10:00:00 print --
+  must show an elevated absolute move. The same check applies to the 14:00 bar on minutes
+  days. If these are flat, the calendar is wrong and nothing downstream means anything.
+
+  event               n  |10:00 bar| bp  t vs ctl  |14:00 bar| bp  t vs ctl
+  ISM_MFG            27            33.5     +1.87            19.4     +1.51
+  ISM_SVC            26            23.1     +0.11            12.9     -0.52
+  MINUTES            18            30.0     +1.06            17.0     +0.53
+  HUMPHREY            4   too few bars in the futures window
+  FOMC               19            17.2     -1.85            47.5     +3.71
+  control days      302            22.6                      14.6
+
+  The 10:00 releases should light up the first column and the 14:00 releases the second.
+  That is each calendar confirming itself against the clock it claims to follow.
+
+================================================================================================================
+2. FREQUENCY — does the clean set reach the ~46 events a year the brief is aiming at?
+================================================================================================================
+  sample 2015-01-05 .. 2026-09-25  (11.7 years)
+
+    MINUTES                n=   96     8.2 per year   pure   80
+    ISM_MFG                n=  140    11.9 per year   pure  102
+    ISM_SVC                n=  138    11.8 per year   pure   95
+    HUMPHREY               n=   23     2.0 per year   pure   21
+    QRA_ESTIMATES          n=   47     4.0 per year   pure   26
+    ----------------------------------------------------------------------
+    CLEAN POOLED           n=  413    35.2 per year
+    CLEAN + FOMC           n=  495    42.2 per year
+
+    QRA_STATEMENT (dirty)  n=   47     4.0 per year   — excluded from the pool by the clock rule
+    control nights         n= 1611
+
+    rolling 12-month count over 454 complete windows: min 39, median 43, max 48
+
+  Frequency is not the binding constraint and never was. The question is whether the added
+  events carry any expectancy, which is section 3.
+
+================================================================================================================
+3. EXPECTANCY AND SIGNIFICANCE — every slice against the same control, net of 2 bp
+================================================================================================================
+  One observation per date: SPY/QQQ/IWM averaged within the date first, because three ETFs
+  on one night are three views of one market move. The control is every session that is
+  neither an event eve nor the night after one, for ALL nine event types. 'own t' tests the
+  net mean against zero; 'vs ctl' is the test that matters, because equities have a positive
+  unconditional overnight return. perm p shuffles date labels 20,000 times.
+
+  THE FIVE CLEAN SIBLINGS (release after the 09:31 exit):
+  slice                     n   net bp   win   own t   vs ctl  Welch t     t p   perm p
+  MINUTES                  96    -2.75   50%   -0.42    -6.42    -0.94   0.349   0.3998
+  ISM_MFG                 140     7.56   61%   +1.16    +3.89    +0.57   0.566   0.5517
+  ISM_SVC                 138    -4.60   54%   -0.64    -8.27    -1.12   0.265   0.2194
+  HUMPHREY                 23    21.18   61%   +1.22   +17.51    +1.00   0.326   0.2386
+  QRA_ESTIMATES            47     6.60   62%   +0.77    +2.93    +0.34   0.738   0.7798
+
+  SAME SLICES, PURE — dates shared with any other event removed:
+  MINUTES [pure]           80    -0.38   51%   -0.05    -4.05    -0.55   0.585   0.6270
+  ISM_MFG [pure]          102     5.77   59%   +0.70    +2.10    +0.25   0.804   0.7823
+  ISM_SVC [pure]           95   -11.60   53%   -1.25   -15.27    -1.61   0.111   0.0571
+  HUMPHREY [pure]          21    17.62   57%   +0.94   +13.95    +0.74   0.469   0.3578
+  QRA_ESTIMATES [pure]     26     1.61   58%   +0.15    -2.06    -0.19   0.849   0.8774
+
+  POOLED, AND THE BENCHMARK IT IS TRYING TO EXTEND:
+  CLEAN POOLED            413     1.87   57%   +0.50    -1.80    -0.43   0.667   0.6668
+  CLEAN + FOMC            495     4.70   58%   +1.43    +1.03    +0.27   0.785   0.7889
+  FOMC                     93    17.99   65%   +3.33   +14.32    +2.50   0.014   0.0717
+
+  THE NEGATIVE CONTROL AND THE TWO ALREADY-REJECTED 08:30 EVENTS, for contrast:
+  QRA_STATEMENT            47    17.62   66%   +2.25   +13.95    +1.73   0.090   0.1953
+  CPI                     139     6.40   60%   +0.80    +2.73    +0.33   0.741   0.6858
+  NFP                     137     1.72   59%   +0.24    -1.95    -0.27   0.790   0.7667
+
+  control nights         1611     3.67   54%   +1.97   (sd 74.8 bp — the number that sets every power limit here)
+
+================================================================================================================
+4. THE PLACEBO — the night AFTER each release, when the uncertainty is already resolved
+================================================================================================================
+  A pre-announcement premium must vanish once the announcement is known. If the night after
+  pays the same as the night before, whatever is being measured is not about the event.
+
+  slice                     n   eve bp   post bp  post vs ctl       t
+  MINUTES                  96    -0.75      1.63        -4.04   -0.41
+  ISM_MFG                 140     9.56     -3.05        -8.72   -1.40
+  ISM_SVC                 138    -2.60      2.15        -3.52   -0.51
+  HUMPHREY                 23    23.18      4.34        -1.33   -0.11
+  QRA_ESTIMATES            47     8.60      3.20        -2.47   -0.29
+  FOMC                     93    19.99      2.33        -3.34   -0.38
+
+================================================================================================================
+5. THE TURN OF THE MONTH — and why the ISM question cannot be answered at all
+================================================================================================================
+  ISM Manufacturing is released on the first business day of every month, so its eve is the
+  last trading day of the month; ISM Services is the third. The turn-of-the-month effect, the
+  oldest documented calendar anomaly there is, lives on exactly those sessions. The honest
+  way to strip it is an event dummy plus one fixed effect per month-position, comparing each
+  event night only against control nights in the same slot -- but that requires such control
+  nights to EXIST, so the overlap is counted first and the estimate is only printed when the
+  comparison is actually identified.
+
+  STEP ONE — the month-position calendar, and how many control nights each position has:
+     position  all nights bp   n all  control bp   n ctl  occupied by
+           -5          +0.02     141       -1.48     127  -
+           -4         +13.17     141      +13.57     122  -
+           -3          +4.16     141       +1.21     103  -
+           -2         +14.16     141      +16.99      96  -
+           -1          +0.23     141       -0.03     111  -
+           +1          +9.10     141      -54.63       1  ISM_MFG
+           +2          -2.90     141          --       0  -
+           +3          -4.44     141      -73.60       3  ISM_SVC
+           +4          +1.69     141      +10.80       3  -
+           +5          +6.50     141      +16.40      45  -
+          mid          +5.20    1539       +5.42    1000  MINUTES, HUMPHREY
+
+    Read the 'n ctl' column. Positions +1 and +3 are nearly empty of control nights because
+    virtually every one of them IS an ISM eve -- ISM has no off-months. The event dummy and
+    the position dummy are therefore the same column, the design is rank-deficient, and any
+    coefficient a pseudo-inverse returns for those slices is extrapolation, not a comparison.
+
+  STEP TWO — the adjusted effect, printed only where the comparison is identified:
+  slice                     n  raw diff  adjusted  robust t  ident  dominant position
+  MINUTES                  96     -6.42     -1.52     -0.20    78%  mid (58% of the slice)
+  ISM_MFG                 140     +3.89 NOT IDENT        --     0%  +1 (100% of the slice)
+  ISM_SVC                 138     -8.27 NOT IDENT        --     0%  +3 (99% of the slice)
+  HUMPHREY                 23    +17.51    +14.03     +0.78    91%  mid (65% of the slice)
+  QRA_ESTIMATES            47     +2.93     +2.27     +0.20    49%  +1 (45% of the slice)
+  QRA_STATEMENT            47    +13.95 NOT IDENT        --    21%  +3 (45% of the slice)
+  FOMC                     93    +14.32    +18.17     +2.91    84%  mid (49% of the slice)
+  CLEAN POOLED            413     -1.80     +1.84     +0.29    29%  +1 (34% of the slice)
+  CLEAN + FOMC            495     +1.03     +7.04     +1.47    40%  +1 (28% of the slice)
+
+  'ident' is the share of the slice's nights sitting in a month-position that has at least
+  10 control nights to compare against. Below 25% the estimate is suppressed rather than
+  reported, because a number like +64 bp at t +9.9 out of a rank-deficient design is an
+  artifact of the solver and would be the single most misleading line in this study.
+
+  WHAT THAT MEANS FOR THE TWO ISM SLICES, WHICH ARE 24 OF THE BRIEF'S ~46 EVENTS A YEAR:
+  their eves and the turn of the month are the same sessions in every month of the sample, so
+  no amount of data separates 'ISM pre-announcement premium' from 'turn-of-the-month drift'.
+  The raw ISM numbers in section 3 are real returns but they are not attributable, and the
+  parsimonious reading is the calendar, which is documented back to the 1980s and needs no
+  pre-announcement mechanism. Two further facts point the same way: the effect is not there
+  in the first place (ISM_MFG +3.9 bp vs control at t +0.57, ISM_SVC negative), and if it were
+  the calendar it would be capturable on month-end nights without any reference to ISM.
+
+================================================================================================================
+6. POWER — which of these slices could ever have produced a significant answer?
+================================================================================================================
+  A null result is only informative if the test could have detected a real effect. The
+  minimum detectable effect below is the smallest true difference from control that would
+  reach t=1.96 given this slice's sample size and the observed overnight volatility. Read
+  it against the FOMC's measured effect: any slice whose MDE exceeds that cannot confirm
+  an FOMC-sized premium even if one is there, and its null means nothing. The MDE is built
+  from each slice's OWN Welch standard error rather than one pooled volatility, so a quiet
+  slice is not penalised for the noise of the average night.
+
+  slice                      n   MDE bp  observed  verdict on the null
+  MINUTES                   96     13.4     -6.42  adequately powered — null is evidence of absence
+  ISM_MFG                  140     13.3     +3.89  adequately powered — null is evidence of absence
+  ISM_SVC                  138     14.5     -8.27  adequately powered — null is evidence of absence
+  HUMPHREY                  23     34.2    +17.51  cannot detect a 14 bp effect — null uninformative
+  QRA_ESTIMATES             47     17.1     +2.93  marginal — could miss a 14 bp effect about half the time
+  QRA_STATEMENT             47     15.8    +13.95  marginal — could miss a 14 bp effect about half the time
+  FOMC                      93     11.2    +14.32  adequately powered — null is evidence of absence
+  CLEAN POOLED             413      8.2     -1.80  adequately powered — null is evidence of absence
+  CLEAN + FOMC             495      7.4     +1.03  adequately powered — null is evidence of absence
+
+  The reference effect is the FOMC's own measured +14.3 bp over control. A slice needs
+  roughly 95 observations against this control to resolve an effect that size, which is why
+  Humphrey-Hawkins and the refunding events are not evidence of absence -- they are absence
+  of evidence, and they would have to run for decades to become anything else.
+
+================================================================================================================
+7. MULTIPLE TESTING — nine slices examined, so one winner at p<0.05 is the expected outcome
+================================================================================================================
+  Every p-value so far is uncorrected. Holm's step-down procedure controls the probability
+  of ANY false positive across the family at 5%: sort the p-values, require the smallest to
+  beat alpha/m, the next alpha/(m-1), and so on. The family here is the five clean siblings
+  plus the FOMC benchmark, using the permutation p because it makes no distributional
+  assumption about fat-tailed overnight returns.
+
+  slice                   raw perm p    Holm p   survives 5% family-wise?
+  FOMC                        0.0717    0.4302                         no
+  ISM_SVC                     0.2194    1.0000                         no
+  HUMPHREY                    0.2386    1.0000                         no
+  MINUTES                     0.3998    1.0000                         no
+  ISM_MFG                     0.5517    1.0000                         no
+  QRA_ESTIMATES               0.7798    1.0000                         no
+
+  And the same slices after the turn-of-the-month adjustment, which is the stricter test
+  because it is the one that removes a known confound rather than a distributional one:
+    MINUTES                adjusted   -1.52 bp at robust t -0.20
+    ISM_MFG                not identified — only 0% of its nights have any same-position control
+    ISM_SVC                not identified — only 0% of its nights have any same-position control
+    HUMPHREY               adjusted  +14.03 bp at robust t +0.78
+    QRA_ESTIMATES          adjusted   +2.27 bp at robust t +0.20
+    FOMC                   adjusted  +18.17 bp at robust t +2.91   <-- clears 2.0
+
+================================================================================================================
+8. SHARPE, DRAWDOWN, CALMAR — does adding the siblings improve the book or dilute it?
+================================================================================================================
+  Sharpe is annualised on each group's own trade count, because the book is flat otherwise.
+  The comparison that matters is CLEAN + FOMC against FOMC alone: if pre-announcement drift
+  is general, pooling should raise the Sharpe by adding independent instances of the same
+  premium. If it is specific to the rate decision, pooling dilutes exactly as CPI and NFP
+  did in the previous study.
+
+  group                       n   net bp   ann bp  Sharpe     maxDD  Calmar  total bp
+  MINUTES                    96    -2.75    -22.5   -0.12   -1028.2   -0.02    -264.2
+  ISM_MFG                   140     7.56     90.3   +0.34    -648.7   +0.14    1058.1
+  ISM_SVC                   138    -4.60    -54.2   -0.19   -1796.5   -0.03    -634.7
+  HUMPHREY                   23    21.18     41.6   +0.36    -160.8   +0.26     487.1
+  QRA_ESTIMATES              47     6.60     26.5   +0.23    -261.3   +0.10     310.3
+  CLEAN POOLED              413     1.87     65.7   +0.15   -2452.0   +0.03     770.6
+  FOMC alone                 93    17.99    142.8   +0.97    -198.4   +0.72    1673.2
+  CLEAN + FOMC              495     4.70    198.6   +0.42   -1713.9   +0.12    2327.9
+  QRA_STATEMENT (dirty)      47    17.62     70.6   +0.66    -230.7   +0.31     828.1
+  SPY buy-and-hold         2949     5.14   1295.5   +0.74   -4112.4   +0.32   15160.7
+
+================================================================================================================
+VERDICT
+================================================================================================================
+
+  THE HYPOTHESIS WAS THAT PRE-ANNOUNCEMENT DRIFT IS A GENERAL PROPERTY OF SCHEDULED POST-OPEN EVENTS.
+  It is not. It is specific to the FOMC rate decision.
+
+  The structural screen worked exactly as the brief intended -- and it disqualified one of the four
+  siblings on its own terms. The Treasury Quarterly Refunding Statement is released at 08:30 ET, inside
+  the 15:59 -> 09:31 window, so it repeats the CPI/NFP defect rather than the FOMC pattern. Its
+  companion release, Treasury's borrowing estimates at 15:00 on the Monday of refunding week, does
+  qualify, so the refunding cycle contributed one clean event and one negative control.
+
+  The remaining five clean slices reach 413 event nights, about 35 a year, and
+  with the FOMC added the brief's ~46 a year is essentially met. Frequency was never the
+  constraint; it was not the constraint in the previous study either. Expectancy is.
+
+  WHAT THE NUMBERS SAY. The FOMC benchmark repeats: +14.32 bp against control at Welch t +2.50,
+  permutation p 0.0717. Pooling it with all five clean siblings gives +1.03 bp at
+  t +0.27, permutation p 0.7889. Adding events that share the FOMC's
+  structural DNA did not add signal, and the pooled t-stat is lower than the benchmark's on its own --
+  the same dilution CPI and NFP produced, arrived at from the opposite
+  direction. The structural screen was necessary and it was not sufficient.
+
+  ISM SUPPLIES 24 OF THE BRIEF'S ~46 EVENTS AND IT CANNOT BE TESTED AT ALL. This is the sharpest thing
+  the study found, and it is a fact about the calendar rather than a p-value. ISM Manufacturing is
+  released on the first business day of every month, so its eve is the LAST TRADING DAY OF THE MONTH,
+  in 140 of 140 cases; ISM Services sits on the third. The turn-of-the-month effect lives on exactly
+  those sessions. Because ISM has no off-months, there is not a single first-trading-day night in
+  eleven years that is NOT an ISM eve -- so the event indicator and the calendar position are the same
+  variable, and no statistical adjustment can separate them. Section 5 counts the available control
+  nights per position before estimating, and suppresses the coefficient where none exist. An earlier
+  version of that regression, run without the check, returned +64 bp at robust t +9.9 for ISM
+  Manufacturing; that was a rank-deficient solver extrapolating, and it is exactly the kind of number
+  that gets a strategy funded. What is left is this: the raw ISM returns are real but unattributable,
+  and the parsimonious owner of them is the calendar, which is documented back to the 1980s and needs
+  no pre-announcement mechanism. It also barely matters here, because the raw ISM effect is not there
+  in the first place -- +3.89 bp vs control at t +0.57, and ISM Services is negative.
+
+  WHY MOST OF THE OTHER NULLS ARE UNINFORMATIVE, WHICH IS A LIMIT OF THE TEST AND NOT A FINDING.
+  Overnight per-date control returns have a standard deviation near 75 bp. Detecting an
+  FOMC-sized 14 bp effect at t=2 against this control needs roughly 95
+  observations. Humphrey-Hawkins supplies 23 in eleven years and the refunding events 47. Those slices
+  could not have produced a significant result even if their true effect equalled the FOMC's, so their
+  flat readings are an absence of evidence rather than evidence of absence -- and Humphrey-Hawkins is
+  the one worth flagging, since it reads +17.5 bp, FOMC-sized or larger, at t +1.00.
+  It is the only sibling this study cannot rule out, and it would take decades of two-a-year events to
+  settle. Section 6 states each slice's minimum detectable effect so
+  none of this can be misread. Only minutes and the pooled sets are both powered and identified, and it
+  is those that carry the conclusion.
+
+  AND THE CORRECTION NOBODY WANTS TO APPLY. Six new slices were tested here on top of three before. At
+  5%, roughly one spurious winner is the expected yield from nine tests. Section 7's Holm step-down
+  keeps the family-wise error at 5%, and the honest reading of any single surviving p-value has to pass
+  through it. The FOMC's permutation p of 0.0717 was already at the boundary before any
+  correction for the fact that it is one of nine things looked at.
+
+  WHERE THE DATES CAME FROM, AND THE ONE THAT DID NOT VALIDATE. Minutes, testimony and refunding dates
+  are scraped from the issuers themselves -- the Fed's own "(Released ...)" annotations, its per-year
+  testimony listings, and TreasuryDirect's auction API, where the announcement date of each new 30-year
+  bond IS the refunding statement. The refunding dates come back 47 for 47 Wednesdays, which is the
+  check that the identification is right. Only ISM is generated from a rule, because ISM publishes no
+  free archive, and rules are how the previous study nearly misdated NFP. So the rule was tested against
+  intraday ES futures: ISM Manufacturing's 10:00 bar moves 33.5 bp on its dates against 22.6 on control
+  (t +1.87) and the FOMC's 14:00 bar moves 47.5 against 14.6 (t +3.71), both confirming the clock. ISM
+  SERVICES DID NOT LIGHT UP -- 23.1 bp against 22.6, t +0.11. At 26 overlapping dates in two years of
+  free 60-minute history that is more likely thin power than a wrong calendar, but it is unverified, and
+  the ISM Services dates should be treated as the weakest list here. It changes nothing about the
+  conclusion, since that slice's raw effect is negative anyway.
+
+  SO WHAT IS THE FOMC EFFECT, IF NOT A GENERAL PRE-EVENT PREMIUM? The evidence now points somewhere
+  narrower and more interesting. It is not that markets pay to shed risk before any scheduled release:
+  ISM, minutes and testimony are all scheduled, all market-moving, all post-open, and none of them pay.
+  What is unique to the rate decision is that it is the only one of these events that changes the
+  policy rate itself -- the discount rate in every valuation on the tape -- and the only one whose
+  outcome a large, identifiable set of institutions is contractually obliged to hedge. FOMC minutes
+  release the same committee's reasoning three weeks later at the identical 14:00 clock and pay
+  nothing, which is close to a controlled experiment: same issuer, same hour, same subject matter,
+  no rate change. The premium attaches to the decision, not to the announcement structure.
+
+  ONE RESULT MOVED THE OTHER WAY, AND IT IS WORTH SAYING. Stripping the calendar makes the FOMC leg
+  STRONGER, not weaker: +14.32 bp raw becomes +18.17 bp at robust t +2.91, the
+  only slice in the study to clear 2.0 on the adjusted test. FOMC eves are scattered through the
+  month -- about half of them land mid-month -- so the fixed effects are removing noise from that
+  comparison rather than removing the effect. That is the signature of a real effect surviving a control
+  rather than being manufactured by one, and it is the opposite of what happened to ISM.
+
+  WHAT THIS MEANS FOR THE TRACK RECORD. Eight trades a year is the honest count, and it stays eight.
+  The FOMC leg earns 143 bp a year, roughly $71 on a $5,000 account, at a
+  Sharpe of +0.97 against a maximum drawdown of -198 bp -- a real but small effect that cannot
+  be scaled by finding more events, because the thing being harvested is not event-ness. Pooling the
+  siblings in raises the annual total to 199 bp but cuts the Sharpe to +0.42 and deepens the
+  drawdown to -1714 bp, which is the same trade the previous study rejected: more gross return for
+  worse risk-adjusted return, on more exposure. Expanding frequency by structural analogy has now
+  failed twice: once with CPI and NFP, where the clock was wrong, and once here, where the clock was
+  right and the mechanism still did not transfer. The next honest move is not another calendar. It is to ask what
+  else shares the rate decision's actual mechanism -- a scheduled, binding change to a price that
+  every other price is quoted against -- and there are very few of those.

@@ -1,0 +1,281 @@
+================================================================================================================
+MACRO OVERNIGHT ALPHA — CPI and NFP eves against the FOMC eve, 2015-present
+================================================================================================================
+  2949 sessions, 2015-01-05 .. 2026-09-25, names SPY, QQQ, IWM, dividend-adjusted
+================================================================================================================
+0. CALENDAR GATE — are the dates real, and does each event land where its clock says it should?
+================================================================================================================
+  BLS RELEASE DATES, scraped from BLS's own schedule pages via the Wayback Machine:
+    CPI  n= 144  2015-01-16 .. 2026-12-10  off-08:30 slots: 0
+    NFP  n= 144  2015-01-09 .. 2026-12-04  off-08:30 slots: 0
+    CPI  weekday mix: {'Wednesday': np.int64(52), 'Thursday': np.int64(34), 'Tuesday': np.int64(34), 'Friday': np.int64(24)}
+    NFP  weekday mix: {'Friday': np.int64(137), 'Thursday': np.int64(5), 'Tuesday': np.int64(1), 'Wednesday': np.int64(1)}
+    NFP on the FIRST Friday: 122 of 144 (85%) — the brief's rule would misdate the other 22.
+
+    FOMC decision days from federalreserve.gov: 93 in sample
+    CPI: 2 release dates fell on non-trading days and were dropped
+    NFP: 4 release dates fell on non-trading days and were dropped
+
+  THE SIGNATURE TEST. A correct date list has to show up in the data, not just parse. CPI and NFP
+  print at 08:30, before the open, so on a correctly dated release morning the ABSOLUTE OVERNIGHT
+  return must be elevated. The FOMC prints at 14:00, during the session, so a correct FOMC date shows
+  an elevated absolute INTRADAY return and nothing unusual overnight. If these come out flat, the
+  dates are wrong and every number after this point is meaningless.
+
+                           |overnight| bp   vs control     |intraday| bp   vs control
+  CPI release day                    65.4      t +2.63              74.3      t +0.86
+  NFP release day                    62.1      t +2.56              79.1      t +1.70
+  FOMC release day                   37.8      t -2.65              86.4      t +2.28
+  control mornings                   49.7                           69.4
+
+  Read the two columns against each other: the 08:30 releases move the overnight window and
+  the 14:00 decision moves the session. That is the calendar validating itself.
+
+================================================================================================================
+1. SAMPLE SIZE AND FREQUENCY — is there even enough here for a one-year track record?
+================================================================================================================
+  sample 2015-01-05 .. 2026-09-25  (11.7 years)
+
+    CPI                      n= 139    11.9 events per calendar year
+    NFP                      n= 137    11.7 events per calendar year
+    FOMC                     n=  93     7.9 events per calendar year
+    POOLED (unique dates)    n= 362    30.9 events per calendar year
+
+    dates carrying two events at once: 7 (counted once in the pooled row, which is why it is not the simple sum)
+    rolling 12-month trade count over 330 complete windows: min 27, median 32, max 34
+
+  The frequency question is answered YES and it is the only part of the brief that works
+  cleanly. Everything after this is about whether the trades are worth taking.
+
+================================================================================================================
+2. EXPECTANCY AND WIN RATE — net of the brief's 1.5 bp round trip
+================================================================================================================
+  Two rows per group. The first treats each ticker-night as an observation, which is what a
+  naive panel regression does. The second averages SPY/QQQ/IWM within each date first. The
+  gap between their t-stats is the cost of pretending three views of one market move are
+  three independent facts.
+
+  group                        n   mean bp   net bp   win%       t        p
+  CPI eves [ticker-night]    417      8.40     6.90    58%   +1.44    0.151
+  CPI eves [per date]        139      8.40     6.90    60%   +0.86    0.391
+
+  NFP eves [ticker-night]    411      3.72     2.22    59%   +0.52    0.605
+  NFP eves [per date]        137      3.72     2.22    59%   +0.32    0.753
+
+  FOMC eves [ticker-night]   279     19.99    18.49    61%   +5.44    0.000
+  FOMC eves [per date]        93     19.99    18.49    65%   +3.42    0.001
+
+  POOLED macro eves [ticker-night]  1086      9.16     7.66    58%   +2.95    0.003
+  POOLED macro eves [per date]   362      9.16     7.66    60%   +1.79    0.075
+
+  control nights [ticker-night]  6705      4.70     3.20    54%   +3.39    0.001
+  control nights [per date]  2235      4.70     3.20    54%   +2.04    0.041
+
+================================================================================================================
+3. SIGNIFICANCE AGAINST THE CONTROL — the null is the baseline overnight return, not zero
+================================================================================================================
+  Equities have a positive unconditional overnight return, so a positive mean on event
+  nights proves nothing on its own. The test is event minus control. Permutation p shuffles
+  the event labels across dates 20,000 times and makes no distributional assumption, which
+  matters because overnight returns are fat-tailed.
+
+  group                     n  event bp  control bp     diff  Welch t     t p   perm p
+  CPI eves                139      8.40        4.70     3.70    +0.45   0.652   0.5775
+  NFP eves                137      3.72        4.70    -0.98    -0.14   0.892   0.8785
+  FOMC eves                93     19.99        4.70    15.29    +2.72   0.008   0.0514
+  POOLED                  362      9.16        4.70     4.46    +0.98   0.329   0.2967
+
+  PLACEBO — the night AFTER the release, when the uncertainty is already resolved.
+  If the eve effect is about positioning ahead of a known event, this must be flat.
+  CPI post                139      1.80        4.70    -2.90    -0.37   0.709
+  NFP post                137     -4.55        4.70    -9.25    -0.94   0.347
+  FOMC post                93      2.33        4.70    -2.37    -0.27   0.785
+  POOLED post             362      0.43        4.70    -4.27    -0.80   0.424
+
+================================================================================================================
+4. SUB-PERIOD STABILITY — did the post-2020 inflation cycle change CPI positioning?
+================================================================================================================
+  Note the control column as well as the event column. The unconditional overnight return
+  itself changed regime, so an event effect that merely tracks its own baseline has not
+  found anything.
+
+  group              period          n  event bp  control bp     diff       t
+  CPI eves           pre-2020       59      0.59        3.85    -3.26   -0.53
+  CPI eves           2020-present   80     14.16        5.34     8.82   +0.66
+
+  NFP eves           pre-2020       59      5.97        3.85     2.12   +0.31
+  NFP eves           2020-present   78      2.02        5.34    -3.32   -0.29
+
+  FOMC eves          pre-2020       40      9.80        3.85     5.95   +1.09
+  FOMC eves          2020-present   53     27.68        5.34    22.34   +2.52
+
+  POOLED             pre-2020      153      4.77        3.85     0.92   +0.23
+  POOLED             2020-present  209     12.38        5.34     7.04   +0.96
+
+================================================================================================================
+5. THE CALENDAR PLACEBO — is NFP eve a payrolls effect or a turn-of-the-month effect?
+================================================================================================================
+  NFP lands on the first Friday, so NFP eve is almost always the first Thursday: trading day 2
+  to 4 of the month. The turn-of-the-month effect is one of the oldest documented calendar anomalies
+  and it lives in exactly that window. CPI sits around trading day 7 to 10. So the control group used
+  above -- all non-event nights, spread evenly through the month -- is the wrong comparison: it differs
+  from the event group in the day of the month as well as in the event. Matching the control to the
+  same trading-day-of-month distribution removes the calendar and leaves only the announcement.
+
+  group                  tdom range      n  event bp  matched ctl     diff       t
+  CPI eves               7-18          139      8.40         4.79     3.61   +0.43
+  NFP eves               1-14          137      3.72         4.86    -1.14   -0.15
+  FOMC eves              1-22           93     19.99         4.25    15.74   +2.79
+
+  For reference, the unmatched control mean was +4.70 bp.
+
+================================================================================================================
+6. SPLITTING DRIFT FROM REACTION — ES futures, which trade at 08:30 when the ETFs cannot
+================================================================================================================
+  This is the section the brief needs and could not have with ETFs. Because ES trades overnight,
+  the CPI/NFP window can be cut at 08:00 -- before the print -- and the two halves measured separately:
+
+     pre-release   prior 16:00 close -> 08:00     contains NO announcement (the real drift analogue)
+     release hour  08:00 -> 09:00                 contains the 08:30 print
+     full window   prior 16:00 close -> 09:00     what the brief's trade actually holds
+
+  If the brief's premise is right, the money is in the pre-release leg. If the full-window result is
+  just the print, the pre-release leg will be flat and the release hour will carry everything. Free
+  60-minute futures history reaches back about two years, so this is roughly 25 events per type --
+  underpowered on its own, and reported as a direction rather than a verdict.
+
+  ES=F sessions available: 586  (2024-05-06 .. 2026-09-24)
+
+  group                 n  pre-release       t   release hr       t     full       t
+  CPI eves             29        -3.00   -1.13        19.06   +2.80    16.10   +0.80
+  NFP eves             26        -8.86   -1.03         6.53   +0.92    -2.29   -0.46
+  FOMC eves            19        20.89   +2.23        -3.82   -0.45    17.06   +1.23
+  control             439         6.66                -0.75             5.91
+
+  sd of each leg on control nights (the risk being taken to earn the means above):
+    pre-release 58.9 bp    release hour 17.2 bp    full 61.8 bp
+
+================================================================================================================
+7. SHARPE, DRAWDOWN, CALMAR — holding equity risk only on these ~32 nights a year
+================================================================================================================
+  P&L is additive basis points per trade, net of 1.5 bp. Sharpe is annualised on each
+  group's OWN trade count, so these are per-unit-risk numbers for a book that is flat the
+  rest of the time -- read them next to the total, which is what actually lands in the
+  account.
+
+  group                     n   net bp   ann bp  Sharpe  maxDD bp  Calmar  total bp
+  CPI eves                139     6.90     81.8   +0.25    -979.4   +0.08     959.0
+  NFP eves                137     2.22     26.0   +0.09    -601.8   +0.04     304.4
+  FOMC eves                93    18.49    146.7   +1.00    -196.4   +0.75    1719.7
+  POOLED                  362     7.66    236.7   +0.52    -957.7   +0.25    2773.8
+  SPY buy-and-hold       2949     5.14   1295.4   +0.74   -4112.4   +0.31   15159.2
+
+  The total column is the one that answers 'can this build a track record'. A pooled
+  strategy trading ~32 nights a year accumulates the bp in that column over the whole
+  sample, before any borrowing cost on the capital that sat idle the other 220 sessions.
+
+================================================================================================================
+VERDICT
+================================================================================================================
+
+  ANSWERING THE CLOSING QUESTION DIRECTLY: does pooling CPI + NFP + FOMC give 30+ events a year with a
+  surviving t-stat > 2.0?
+
+     FREQUENCY: YES, and comfortably. 362 unique event dates over 11.7 years is 30.9 per year, and the
+     rolling 12-month count across 330 complete windows never drops below 27 (median 32, max 34). The
+     frequency problem the brief set out to solve is solved.
+
+     T-STAT: NO. Pooled per-date net expectancy is +7.66 bp at t +1.79 (p 0.075) against zero, and
+     against the control it is +4.46 bp at Welch t +0.98, permutation p 0.30. Both fail, and the second
+     is the one that counts, because equities have a positive unconditional overnight return -- the
+     control nights themselves print +4.70 bp at t +2.04. More than half the pooled "edge" is just
+     being long overnight.
+
+  WHY POOLING CANNOT WORK HERE, AND IT IS NOT A SAMPLE-SIZE PROBLEM. The pooled t-stat is not low
+  because 362 observations are too few. It is low because the three event types are not three instances
+  of one phenomenon. CPI and NFP print at 08:30 ET; the equity market opens at 09:30. The brief's trade
+  -- buy 15:59, sell 09:31 -- therefore HOLDS THROUGH THE PRINT. There is no exit between 08:30 and
+  09:30 because the venue is shut. The FOMC statement lands at 14:00, during the session, so the FOMC
+  overnight window contains NO announcement at all: you are paid to carry risk INTO a known event and
+  you are out before it. Those are opposite trades. One collects a risk premium for holding exposure
+  someone else wants to shed ahead of an event; the other takes a directional bet on the content of a
+  number. Averaging them to reach a trade count blends a premium with a coin flip.
+
+  THE FUTURES DECOMPOSITION TURNS THAT ARGUMENT INTO A MEASUREMENT. ES trades at 08:30 when the ETFs
+  cannot, so the window splits at 08:00 and the two halves can be priced separately:
+
+     FOMC eve:  pre-release +20.89 bp (t +2.23)   release hour  -3.82 bp (t -0.45)
+     CPI  eve:  pre-release  -3.00 bp (t -1.13)   release hour +19.06 bp (t +2.80)
+     NFP  eve:  pre-release  -8.86 bp (t -1.03)   release hour  +6.53 bp (t +0.92)
+
+  The FOMC effect is entirely BEFORE the event and vanishes in the release hour -- genuine
+  pre-announcement drift, exactly what the original study found. The CPI effect is entirely INSIDE the
+  print and is flat, slightly negative, in the hours before it. CPI is not a positioning trade that the
+  brief can inherit; it is a reaction trade, and a long-only reaction trade is a directional bet that
+  inflation surprises downward. That bet won over a 2024-2026 futures sample in which inflation was
+  falling. It is not an anomaly, it is a macro view, and it has no reason to repeat. NFP is nothing
+  anywhere: pre-release negative, release hour insignificant, full window -2.29.
+
+  WHAT EACH LEG ACTUALLY DELIVERS, PER DATE, NET OF THE 1.5 bp ROUND TRIP:
+
+     FOMC eves   n= 93   +18.49 bp   win 65%   t +3.42   vs ctl +15.29 (t +2.72, perm p 0.051)
+     CPI  eves   n=139    +6.90 bp   win 60%   t +0.86   vs ctl  +3.70 (t +0.45, perm p 0.578)
+     NFP  eves   n=137    +2.22 bp   win 59%   t +0.32   vs ctl  -0.98 (t -0.14, perm p 0.879)
+     POOLED      n=362    +7.66 bp   win 60%   t +1.79   vs ctl  +4.46 (t +0.98, perm p 0.297)
+
+  Only FOMC survives, and pooling actively destroys it. Sharpe on the FOMC leg alone is +1.00 with a
+  maxDD of -196 bp and Calmar +0.75. Pool it with the other two and Sharpe falls to +0.52 and the
+  drawdown nearly quintuples to -958 bp, because CPI contributes a -979 bp drawdown of its own to earn
+  an insignificant mean. Adding 269 trades that pay nothing cut the risk-adjusted return in half. That
+  is the whole answer to the brief: the trade count went up and the strategy got worse, because trade
+  count is not what was scarce. Signal was.
+
+  THREE CHECKS THAT COULD HAVE FAKED A RESULT, AND WHERE THEY LANDED.
+     1. Dividends. Unadjusted SPY close-to-open averages -43.1 bp on its 47 ex-dividend mornings
+        against +3.7 bp otherwise, a -47 bp artifact several times larger than any effect here, and SPY's
+        ex-dates are the third Friday of Mar/Jun/Sep/Dec -- mid-month, where CPI lives. auto_adjust
+        is mandatory, not hygiene.
+     2. Ticker clustering. SPY, QQQ and IWM on one night are three views of one market move. Treating
+        them as independent moves the pooled t from +2.95 to +1.79. The naive panel t-stat clears the
+        brief's bar; the honest one does not.
+     3. Calendar confounds. NFP eve is usually the first Thursday, trading day 2 to 4, inside the
+        turn-of-the-month window -- one of the oldest documented calendar anomalies. Matching the
+        control on trading-day-of-month leaves NFP at -1.14 bp and FOMC at +15.74 bp (t +2.79), so the
+        FOMC result is not a calendar effect and the NFP non-result is not being hidden by one.
+
+  THE DATES THEMSELVES WERE THE MOST LIKELY WAY TO GET THIS WRONG. The brief's rules -- CPI on
+  "mid-month Wednesdays/Thursdays", NFP on "the first Friday" -- are approximations, and a misdated
+  event is wrong twice: a real event lands in the control group and an ordinary night lands in the
+  event group. Measured against BLS's own published schedule, only 122 of 144 Employment Situation
+  releases (85%) fall in the first seven days of the month. The dates used here were scraped from
+  bls.gov's own schedule pages via the Wayback Machine, keyed on reference month so that the autumn
+  2025 shutdown reschedules resolve to the replacement date rather than keeping both, and they
+  reconstruct exactly 12 releases per year for all 12 years with no gaps. The signature test then
+  confirms them in the data rather than in the parser: absolute overnight moves are elevated on CPI
+  (65.4 bp, t +2.63) and NFP (62.1 bp, t +2.56) mornings and SUPPRESSED on FOMC mornings (37.8 bp,
+  t -2.65) while FOMC intraday moves are elevated (86.4 bp, t +2.28). The 08:30 releases move the
+  overnight window; the 14:00 decision moves the session. That is the clock validating the calendar.
+
+  THE SUB-PERIOD RESULT IS THE OPPOSITE OF THE BRIEF'S HYPOTHESIS. The brief expected the post-2020
+  inflation cycle to have created CPI positioning. CPI eve goes from -3.26 bp (t -0.53) pre-2020 to
+  +8.82 bp (t +0.66) after -- a sign flip with neither half significant, which is what a null looks
+  like when it is cut in two. FOMC strengthens instead: +5.95 bp (t +1.09) to +22.34 bp (t +2.52). The
+  event whose window excludes its own announcement is the one that got better.
+
+  A SCALE NOTE THAT MATTERS MORE THAN THE STATISTICS. The FOMC leg earns 146.7 bp per year, which on a
+  $5,000 account is about $73 before commissions and before any cost on the capital idle the other 244
+  sessions. Pooled it is 236.7 bp, about $118. SPY buy-and-hold over the same span returned 1,295.7 bp
+  a year at a HIGHER Sharpe (+0.74 against the pooled +0.52). Even the leg that works does not clear
+  the opportunity cost of simply being invested, and no amount of added event frequency fixes that,
+  because the added events have no expectancy to scale.
+
+  WHAT TO DO WITH THIS. Keep the FOMC eve trade -- it is real, it survives a permutation test at the
+  edge of significance (p 0.051), it survives a turn-of-the-month control, and the futures split shows
+  the money arriving before the announcement rather than from it. Do not pool it. If the goal is a
+  one-year track record with more than eight prints, the honest extension is to look for other events
+  whose announcement falls OUTSIDE the holding window -- Treasury refunding announcements, ECB
+  decisions timed to the US session, index rebalance effective dates -- rather than events chosen for
+  being frequent. The scarce resource in all four studies so far has been mechanism, not sample size,
+  and the disqualifying fact has each time been cheap to measure before building anything: here it was
+  a wall clock. CPI prints at 08:30 and the market opens at 09:30, so the brief's trade was never a
+  pre-announcement trade at all.

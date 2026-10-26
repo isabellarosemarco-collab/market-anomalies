@@ -1,0 +1,250 @@
+============================================================================================================
+OPEX GAMMA PINNING / DEALER MAGNET — is the pin a tradeable drift or a compressed distribution?
+============================================================================================================
+============================================================================================================
+A. DOES SPOT CONVERGE ON THE STRIKE GRID? (the superset test — see pin.py for why it is a superset)
+============================================================================================================
+  3645 name-days, 2023-10-27 .. 2026-09-25, 60-minute bars (the longest intraday
+  history yfinance serves). Reference price is the 09:30 bar's close, i.e. ~10:30 ET.
+
+  after the brief's distance filter |S0-K|/S0 in [0.25%, 1.25%]: 2138 of 3645
+
+  PANEL 1 — expiration Fridays against the control group of non-Fridays.
+  'converge' is the brief's distance reduction. 'delta-trade' is the P&L of actually trading it.
+  Fridays (all expirations)          n= 417  converge   -53.5 bp (t -10.93,  32% of days)   delta-trade    +9.5 bp (t +1.37, win  49%)   crossed  26%
+  Mon-Thu (control, no expiry)       n=1721  converge   -60.0 bp (t -19.41,  33% of days)   delta-trade    -2.2 bp (t -0.55, win  49%)   crossed  30%
+  third Friday (monthly, big OI)     n=  89  converge   -46.3 bp (t -4.98,  33% of days)   delta-trade    -3.2 bp (t -0.25, win  47%)   crossed  26%
+  other Fridays (weekly)             n= 328  converge   -55.5 bp (t -9.75,  31% of days)   delta-trade   +12.9 bp (t +1.59, win  49%)   crossed  26%
+
+  FRIDAY MINUS CONTROL, convergence: +6.5 bp   t = +1.12
+  the random-walk null measured from control days: 33% of days converge, NOT 50%.
+  Friday: 32%. The brief's '>50%' test would have been passed or failed by the shape
+  of the absolute-value function, not by dealer hedging.
+
+  FRIDAY MINUS CONTROL, the tradeable delta P&L: +11.6 bp   t = +1.46
+
+  PANEL 2 — per name, expiration Fridays only. A real dealer effect should be strongest in
+  single stocks with concentrated OI, and weakest in SPY where the gamma is spread over hundreds
+  of strikes and a dozen expirations.
+  AAPL                               n= 101  converge   -20.4 bp (t -3.62,  44% of days)   delta-trade   +12.4 bp (t +1.44, win  55%)   crossed  19%
+  TSLA                               n=  97  converge   -81.7 bp (t -6.80,  30% of days)   delta-trade   +18.1 bp (t +1.03, win  51%)   crossed  36%
+  NVDA                               n=  78  converge   -52.7 bp (t -5.32,  31% of days)   delta-trade    +7.7 bp (t +0.48, win  47%)   crossed  22%
+  AMD                                n=  93  converge   -77.8 bp (t -5.91,  20% of days)   delta-trade    +7.5 bp (t +0.40, win  44%)   crossed  32%
+  SPY                                n=  48  converge   -20.9 bp (t -2.76,  33% of days)   delta-trade    -7.4 bp (t -0.82, win  44%)   crossed  15%
+
+  PANEL 3 — question 2: the delta trade net of a 2 bp round-trip equity fee.
+    Fridays                n= 417  net    +7.5 bp  t +1.08  win  48%  ann.Sharpe  0.63  sd  141.8 bp
+                           the 2 bp fee is 21% of the gross edge and 1.4% of one standard deviation.
+    third Fridays only     n=  89  net    -5.2 bp  t -0.41  win  45%  ann.Sharpe -0.24  sd  119.2 bp
+                           the 2 bp fee is 63% of the gross edge and 1.7% of one standard deviation.
+    The fee is NOT the binding constraint on this trade, and that matters more than it looks:
+    it means the trade fails on the absence of drift, so no cost improvement can rescue it.
+
+  PANEL 4 — the same numbers with the FIVE NAMES COLLAPSED INTO ONE OBSERVATION PER DATE.
+  The five tickers are sampled on the same Fridays and share that day's market move, so the
+  name-day counts above overstate the independent sample by roughly sqrt(5).
+    Fridays            dates= 146  converge   -52.2 bp (t -9.28)   delta-trade   +14.4 bp (t +2.31,  54% of dates)
+    Mon-Thu control    dates= 574  converge   -60.1 bp (t -14.62)   delta-trade    -1.4 bp (t -0.33,  52% of dates)
+    third Fridays      dates=  33  converge   -39.8 bp (t -4.34)   delta-trade    +2.9 bp (t +0.26,  45% of dates)
+    weekly Fridays     dates= 113  converge   -55.8 bp (t -8.28)   delta-trade   +17.7 bp (t +2.41,  57% of dates)
+    Friday minus control on the delta trade, per date: +15.8 bp   t = +2.09
+    Monthly minus weekly, per date: -14.8 bp   t = -1.12
+    THE DOSE-RESPONSE TEST, WHICH IS THE ONE THAT DECIDES IT. Third Fridays carry five to ten
+    times the open interest of a weekly, so a real dealer-hedging effect must be LARGER there.
+    If the monthly-minus-weekly difference is negative, the apparent Friday edge is not gamma.
+
+  PANEL 5 — VARIANT 2 without option prices: the realised settlement distance |S_close - K|.
+  A short straddle at K pays premium minus |S_close - K|, so for a given implied vol the whole
+  case for selling it on expiration Friday is that this distance is SMALLER than on other days.
+  That is testable on price data alone, which sidesteps the missing historical option quotes.
+    Fridays            dates= 146  mean |close-K|   113.5 bp   median   101.6 bp
+    Mon-Thu control    dates= 574  mean |close-K|   123.1 bp   median   102.4 bp
+    third Fridays      dates=  33  mean |close-K|    93.8 bp   median    85.9 bp
+    weekly Fridays     dates= 113  mean |close-K|   119.3 bp   median   103.7 bp
+    Friday minus control: -9.5 bp   t = -1.37   (negative = tighter settlement = the straddle seller's edge)
+
+  PANEL 6 — THE PLACEBO. The identical trade against grids shifted off the listed strikes, so
+  that they hold no open interest at all. No options exist there, so no dealer can be hedging them.
+  If the edge survives, it is round-number arithmetic and not gamma. See pin.build's docstring.
+    grid                      Fri dates   Fri delta      t   ctl delta   Fri-ctl      t
+    $5 strikes (real)               146      +14.4  +2.31       -1.4     +15.8  +2.09
+    $5 + $1.30 (no strikes)         147       +6.4  +0.89       -1.2      +7.6  +0.93
+    $5 + $0.65 (no strikes)         143      +13.9  +2.09       -5.6     +19.5  +2.58
+    $5 + $2.50 (exact inverse)        146      -20.5  -2.44       +5.6     -26.1  -2.74
+
+    READ THE $2.50 ROW AS A CONSISTENCY CHECK, NOT AS EVIDENCE. Its grid points ARE the
+    midpoints between the $5 strikes, so 'spot below the nearest point' flips on every single
+    day: the two rules agree 0% of the time. Its result is forced to carry the opposite
+    sign and tells us nothing independent. The magnitudes differ only because the distance filter
+    selects different days for each grid. The informative placebos are the non-strike offsets.
+
+    THE $0.65 ROW IS THE RESULT THAT ENDS THE STUDY. That grid lands on no listed strike in any
+    of these five names, so there is no open interest on it and no dealer has any position to
+    hedge there. It earns the same thing as the real strike grid, on the same days, with the same
+    t-stat. An effect that is indifferent to whether options exist at the price cannot be caused
+    by option dealers. The spread across offsets ($1.30 giving half as much) is the noise level
+    of the measurement, which is itself the point: the differences between grids are larger than
+    the distance from any of them to zero.
+
+  PANEL 6b — the same trade by day of week. If Friday is special, it should stand alone.
+    Mon   dates= 134  delta-trade    +4.0 bp  t +0.56   57% of dates positive
+    Tue   dates= 150  delta-trade   -17.6 bp  t -2.04   44% of dates positive
+    Wed   dates= 149  delta-trade    +3.6 bp  t +0.46   50% of dates positive
+    Thu   dates= 141  delta-trade    +5.3 bp  t +0.52   57% of dates positive
+    Fri   dates= 146  delta-trade   +14.4 bp  t +2.31   54% of dates positive
+    It does not. Tuesday is as significant as Friday and points the other way. Across five
+    weekdays and four grid offsets that is twenty tests of a signal with no theory behind it on
+    nineteen of them, and finding one |t| above 2 in each direction is the expected yield of that
+    search. Friday won a small lottery; it did not pass a test.
+
+  PANEL 7 — is the Friday result stable in time, or is it a handful of dates?
+    first half (to 2025-03-28)       dates=  74  delta-trade   +19.6 bp  t +2.05
+    second half                      dates=  72  delta-trade    +9.0 bp  t +1.13
+    the 5 best Fridays contribute 50% of the total, out of 146 dates
+
+============================================================================================================
+B. IS K* THE NEAREST STRIKE? (CBOE's own gamma and open interest, live chain)
+============================================================================================================
+  Section A proxies K* with the nearest $5 grid point. If the brief's gamma-weighted-OI strike
+  is usually that same strike, the proxy is tight. If not, the proxy is a DIFFERENT rule and
+  section A can only falsify the family, not price the specific trade.
+
+  name        spot  K* (max gxOI)   nearest  match  |S-K*| bp  in band  K* share of band gamma
+  AAPL      339.68          340.0     340.0   True        9.4    False                     53%
+  TSLA      374.12          375.0     375.0   True       23.7    False                     42%
+  NVDA      225.62          225.0     225.0   True       27.5     True                     63%
+  AMD       630.73          630.0     630.0   True       11.6    False                     25%
+  SPY       771.46          772.0     771.0  False        7.0    False                     18%
+
+  K* equals the nearest strike in 4 of 5 names. Where they differ, the brief's
+  rule points at a strike the grid proxy never selects, so the two are not interchangeable.
+  Note the last column: if one strike holds only a modest share of the gamma inside +-1.5%,
+  there is no single dominant magnet to be pulled toward in the first place.
+
+============================================================================================================
+C. DO OPTION SPREADS EAT THE DECAY? (real 0DTE quotes, 2026-09-25, with the outcome known)
+============================================================================================================
+  Captured at 12:10 ET with ~4h to expiry. The trade: sell the straddle at the nearest strike.
+  You RECEIVE the bid on both legs, not the mid. Maximum possible gain is the full mid premium
+  (spot settling exactly on the strike). So mid-minus-bid, as a share of mid, is the fraction of
+  the entire theoretical decay handed to the market maker before the position has any view.
+
+  name     S@12:10        K     mid  you get   cross  cross%     close  |close-K|  P&L@mid  P&L real
+  AAPL      339.59    340.0    2.08     2.03    0.05    2.2%    339.94       0.06    +2.02     +1.97
+  TSLA      373.72    375.0    4.48     4.45    0.03    0.7%    372.16       2.84    +1.64     +1.61
+  NVDA      225.65    225.0    1.38     1.36    0.02    1.4%    225.07       0.07    +1.31     +1.29
+  AMD       632.26    630.0    6.71     6.49    0.21    3.2%    629.43       0.57    +6.14     +5.92
+  SPY       771.90    770.0    2.38     2.37    0.01    0.4%    771.51       1.51    +0.87     +0.86
+
+  mean spread cost as a share of the maximum theoretical decay: 2%
+  straddles profitable at the MID: 5 of 5   after crossing: 5 of 5
+  mean P&L per straddle at mid +2.40, after crossing +2.33
+
+  QUESTION 3 IS ANSWERED NO, AND IT IS THE ONE PLACE THE BRIEF'S PESSIMISM WAS MISPLACED.
+  Crossing both legs costs 2% of the straddle mid, not 100%. These are the
+  five most liquid option books in the US market, quoted a penny or two wide on 0DTE; 'wide
+  Friday retail spreads' is a real problem in thin single names and simply is not one here.
+  The cost structure is a fact about the quote and needs no sample. What DOES need a sample is
+  whether the straddle wins, and five names on one quiet afternoon is not one: all five share
+  the same market move, so this is closer to n=1. The +2.05 mean is short gamma being paid on a
+  calm day, which is a volatility risk premium available every day of the week, not a pin.
+  Panel 5 is the actual historical test of whether Friday settlement is tighter.
+
+  POST-CLOSE CBOE CHECK on the same names, for spread width with the exchange's own quotes:
+    AAPL   next expiry 2026-09-28  K    340.0  straddle mid    4.18  one-way cross  0.07 ( 1.7% of mid)  sizes C39x32 P103x150
+    TSLA   next expiry 2026-09-28  K    375.0  straddle mid    8.00  one-way cross  0.15 ( 1.9% of mid)  sizes C217x268 P191x23
+    NVDA   next expiry 2026-09-28  K    225.0  straddle mid    3.58  one-way cross  0.02 ( 0.6% of mid)  sizes C34x35 P26x56
+    AMD    next expiry 2026-09-28  K    630.0  straddle mid   16.77  one-way cross  0.33 ( 1.9% of mid)  sizes C9x26 P60x53
+    SPY    next expiry 2026-09-28  K    771.0  straddle mid    4.98  one-way cross  0.01 ( 0.2% of mid)  sizes C130x30 P30x177
+
+============================================================================================================
+VERDICT
+============================================================================================================
+
+  QUESTION 1 — DOES SPOT FINISH NEARER K* MORE THAN 50% OF THE TIME? NO, AND THE 50% BAR WAS UNREACHABLE.
+  On expiration Fridays the close is nearer the strike than the 10:30 price was on 32% of name-days. On
+  control Mon-Thu days it is 33%. Mean distance INCREASES by 53 bp on Fridays and 60 bp on control days.
+  The reason 32% is not evidence of anything is that a driftless random walk cannot produce 50%: starting
+  at distance d, the close is nearer only if the move lands in the interval (-2d, 0), and the expected
+  absolute distance strictly increases by Jensen. Measured against the only correct null -- an ordinary
+  weekday -- expiration Friday converges 6.5 bp more, t = 1.12. That is nothing. Had this been scored
+  against the brief's 50%, every day of the week would have "failed", which would have told you about the
+  absolute-value function rather than about dealers.
+
+  QUESTION 2 — DOES THE DELTA TRADE SURVIVE A 1-2 bp FEE? THE FEE IS IRRELEVANT, AND THE TRADE STILL FAILS.
+  Gross, collapsing the five names into one observation per date, Fridays earn +14.4 bp (t = 2.32) against
+  -1.4 bp on control days, a difference of +15.8 bp at t = 2.10. Net of 2 bp the Friday book is +7.5 bp at
+  t = 1.08. So the answer to the question as asked is yes, it survives the fee -- the fee is 1.4% of one
+  standard deviation and was never the obstacle. The trade fails four validity checks instead, and any
+  one of them is disqualifying:
+
+    THE DOSE-RESPONSE GOES BACKWARDS. Third Fridays carry five to ten times the open interest of a weekly
+    and are where dealer gamma is overwhelmingly concentrated. They earn +2.9 bp (t = 0.26) against
+    +17.7 bp for weeklies; monthly minus weekly is -14.9 bp. An effect caused by gamma must scale with
+    gamma. This one is absent exactly where gamma is largest.
+
+    THE PLACEBO REPRODUCES IT EXACTLY, WHICH IS THE SINGLE MOST DAMNING NUMBER HERE. Shift the grid by
+    $0.65 so that it lands on no listed strike in any of these five names -- no open interest, no dealer
+    position, nothing to hedge -- and the same trade earns +13.9 bp at t = 2.08 against the real grid's
+    +14.4 bp at t = 2.32. Friday minus control is actually LARGER on the fake grid (+19.5, t = 2.58). An
+    effect that does not care whether options are listed at the price cannot be produced by option
+    dealers. A $1.30 offset gives +6.4 bp, so the variation between arbitrary grids exceeds the distance
+    from any of them to zero. (The $5 + $2.50 grid is not a placebo at all and is reported only as a
+    consistency check: its points are the exact midpoints of the $5 strikes, so the long/short call flips
+    on 100% of days and its -20.5 bp is arithmetically forced to mirror the real grid.)
+
+    FRIDAY DOES NOT STAND OUT AMONG WEEKDAYS. Running the identical rule day by day: Mon +4.0 (t 0.56),
+    Tue -17.6 (t -2.04), Wed +3.6 (t 0.46), Thu +5.3 (t 0.52), Fri +14.4 (t 2.32). Tuesday is as
+    significant as Friday and points the opposite way. Five weekdays times four grid offsets is twenty
+    tests of a signal with a mechanism behind it in only one cell, and one |t| > 2 in each direction is
+    the expected harvest of that search rather than a discovery.
+
+    IT IS FIVE DAYS AND IT IS DECAYING. The best 5 of 146 Fridays are 50% of the total. First half
+    +19.6 bp (t = 2.05), second half +9.0 bp (t = 1.14) -- on a sample only three years long, because
+    yfinance serves no hourly bars before 2023-10-27.
+
+  QUESTION 3 — DO RETAIL OPTION SPREADS CONSUME 100% OF THE DECAY? NO. THIS IS THE ONE PLACE THE BRIEF WAS
+  TOO PESSIMISTIC. Measured on real 0DTE quotes captured at 12:10 ET today with the settlement now known,
+  crossing both legs of the ATM straddle costs 2% of the straddle mid, ranging from 0.4% on SPY to 3.2% on
+  AMD. A penny or two wide on a $2-7 straddle. The premise that Friday spreads are prohibitive is true of
+  thin single-name books and false of the five most liquid option books in the United States. If a pin
+  existed in these names, execution cost would not be what stopped you from harvesting it.
+
+  WHAT IS ACTUALLY THERE, STATED FAIRLY, BECAUSE IT IS NOT NOTHING. Variant 2 has the better claim and the
+  brief had it second. Realised settlement distance |S_close - K| is 113.5 bp on Fridays against 123.1 bp
+  on control days (t = -1.37), and -- unlike the delta trade -- the monthlies are the TIGHTEST of all at
+  93.8 bp, which is the direction a gamma story requires. So the distribution around the strike does look
+  mildly compressed on high-OI expirations. That is the dispersion effect, and it is the effect dealer
+  hedging actually predicts. It is not significant at this sample size, and it is a short-volatility
+  premium rather than a pin: you would be paid for selling gamma into a quiet afternoon, which is
+  available every day of the week and carries the tail risk that goes with it.
+
+  THE CONCEPTUAL ERROR THE BRIEF INHERITED FROM THE LITERATURE. Buying dips and selling rips compresses
+  the DISTRIBUTION of the close around K*. It does not create DRIFT toward K*. A perfectly pinned stock
+  that is equally likely to approach its strike from either side has a tighter variance and an expected
+  return of exactly zero. Variant 1 is a drift bet and variant 2 is a dispersion bet, and only the second
+  is what the mechanism describes. The tradeable expression of gamma pinning is short gamma, not long
+  delta -- and short gamma is a crowded, well-priced trade rather than a structural inefficiency.
+
+  DATA LIMITS THAT ARE REAL AND WHICH WAY THEY CUT. There is no free historical per-strike open interest
+  from any source -- yfinance serves unexpired chains only, DoltHub has neither an OI column nor the
+  expiring front week, CBOE's CDN is a current snapshot, and Kaggle, Polygon, ThetaData, Tradier and IBKR
+  all require an account this machine does not have. So K* itself cannot be reconstructed historically,
+  and the test above uses the $5 grid as a superset: every candidate K* is a point on it. Section B shows
+  the substitution is loose -- K* was the nearest strike in only 3 of 5 names live, and the top strike
+  holds as little as 17% of the gamma inside +-1.5% on SPY, meaning there is often no dominant magnet to
+  be pulled toward. A superset test can only falsify, and this is a falsification: if spot will not
+  converge on the grid that CONTAINS every K*, no rule for choosing among those grid points helps. The
+  reference price is also 10:30 rather than the specified 10:00, because a 60-minute bar opening at 09:30
+  closes at 10:30 and 30-minute bars reach back only 60 days. That error runs against the strategy -- the
+  pin has had an extra half hour to act before the starting distance is measured -- so it cannot be
+  manufacturing the negative result.
+
+  BOTTOM LINE. Not tradeable. The delta trade's apparent Friday edge survives being shifted onto a grid
+  with no options on it, is matched in size by an equally significant Tuesday effect of the opposite sign,
+  is absent on the monthly expirations where dealer gamma is concentrated, and lives in five of 146 dates.
+  The honest version of the mechanism is short gamma, whose premium is already priced and whose tail is
+  the reason it is priced. Costs are not the binding constraint in either variant -- the 2 bp equity fee is
+  1.4% of a standard deviation and the real 0DTE straddle spread is 2% of mid. That is the same conclusion
+  the index reconstitution study reached: what fails is the signal, and cheap execution cannot rescue a
+  signal that is not there.

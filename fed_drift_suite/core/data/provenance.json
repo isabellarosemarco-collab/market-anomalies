@@ -1,0 +1,25 @@
+{
+  "built_at": "2026-09-25T01:54:25+00:00",
+  "price_source": "yfinance (Yahoo Finance) daily bars, auto_adjust=False, actions=True",
+  "calendar_source": "federalreserve.gov fomccalendars.htm + fomchistorical{year}.htm",
+  "symbols": [
+    "SPY",
+    "QQQ",
+    "IWM"
+  ],
+  "n_decision_dates_cached": 255,
+  "n_trades": 675,
+  "n_baseline_nights": 22018,
+  "first_trade": "1996-01-31",
+  "last_trade": "2026-09-16",
+  "holdout_end": "2017-12-31",
+  "holdout_note": "The rule was specified on 2018+ data. Rows marked 'holdout' (<= 2017-12-31) were never examined while choosing the rule and are the only genuinely out-of-sample evidence here.",
+  "cost_model": {
+    "slippage_bp_per_side": 0.5,
+    "commission_per_share": 0.0035,
+    "sec_section31_frac_of_sell_notional": 2.78e-05,
+    "finra_taf_per_share": 0.000166,
+    "charged": "full round trip, every trade, computed per-row from the entry price"
+  },
+  "trade_definition": "Buy at the close of the trading session immediately preceding a scheduled FOMC decision; sell at that decision session's open. No overnight position is held through the 14:00 ET statement."
+}

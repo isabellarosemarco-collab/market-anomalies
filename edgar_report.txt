@@ -1,0 +1,225 @@
+==============================================================================================================
+SEC EDGAR 8-K ENGINE — gated before built
+==============================================================================================================
+all endpoints public and unauthenticated; declared User-Agent throughout; no credentials
+
+==============================================================================================================
+TEST 1 — POPULATION: are price-moving 8-Ks even filed while the market is open?
+==============================================================================================================
+  2026-09-24: 184 8-K filings in the daily index, sampling 60
+  2026-09-23: 177 8-K filings in the daily index, sampling 60
+  2026-09-22: 194 8-K filings in the daily index, sampling 60
+  2026-09-21: 174 8-K filings in the daily index, sampling 60
+  2026-09-18: 155 8-K filings in the daily index, sampling 60
+
+  8-K filings sampled: 300   acceptance timestamp resolved: 300
+
+  WHEN 8-Ks ARE ACTUALLY ACCEPTED (US/Eastern):
+    INTRADAY       43 ( 14.3%)  #####
+    pre-market     96 ( 32.0%)  ############
+    after-hours   158 ( 52.7%)  #####################
+    overnight       3 (  1.0%)  
+
+  share landing in the continuous session (09:30-16:00 ET): 14.3%
+
+  by half-hour (only buckets wholly inside 09:30-16:00 are the session):
+    06:00     8  ####
+    06:30    10  #####
+    07:00    15  ########
+    07:30     3  #
+    08:00    21  ###########
+    08:30    17  #########
+    09:00    22  ############
+    09:30     5  ## <- SESSION
+    10:00     2  # <- SESSION
+    10:30     2  # <- SESSION
+    11:00     1   <- SESSION
+    11:30     5  ## <- SESSION
+    12:00     4  ## <- SESSION
+    12:30     2  # <- SESSION
+    13:00     3  # <- SESSION
+    14:00     6  ### <- SESSION
+    14:30     3  # <- SESSION
+    15:00     6  ### <- SESSION
+    15:30     4  ## <- SESSION
+    16:00    91  ##################################################
+    16:30    32  #################
+    17:00    29  ###############
+    18:00     2  #
+    18:30     1  
+    19:00     2  #
+    19:30     1  
+    20:00     2  #
+    20:30     1  
+
+  MATERIALITY x SESSION:
+    HARD  (item code alone is the signal)       23 of 300 (  7.7%)
+    SOFT  (needs the document read to judge)   246 of 300 ( 82.0%)
+    routine housekeeping                        31 of 300 ( 10.3%)
+
+    HARD filings accepted inside 09:30-16:00 ET:   5 of 23
+    TRADEABLE POPULATION (hard AND intraday):      5 of 300 = 1.7% of all 8-Ks, ~1.0 per day market-wide
+
+    hard filings by session:
+      INTRADAY        5 ( 21.7%)
+      pre-market      5 ( 21.7%)
+      after-hours    13 ( 56.5%)
+
+    HARD items, and how many of each land intraday:
+      EARNINGS               13 total,   4 intraday (31%)
+      delisting               6 total,   0 intraday (0%)
+      M&A completed           4 total,   1 intraday (25%)
+
+    SOFT items, and how many of each land intraday:
+      other events          102 total,  12 intraday (12%)
+      Reg FD                 87 total,   5 intraday (6%)
+      material agreement     77 total,   9 intraday (12%)
+      officer departure      58 total,   8 intraday (14%)
+
+  filings whose ACCEPTANCE date differs from the index FILED date: 9 of 300 (3.0%)
+  Those are the after-17:30 acceptances rolled to the next business day. Sessioning from
+  the index date alone would place every one of them in the wrong trading session.
+
+==============================================================================================================
+TEST 2 — LATENCY: how stale is a filing when you first see it?
+==============================================================================================================
+  poll @ 11:39:24  feed built     1s ago  new accessions:  74  tracked: 74
+  poll @ 11:39:28  feed built     0s ago  new accessions:   1  tracked: 75
+  poll @ 11:39:40  feed built    11s ago  new accessions:   0  tracked: 75
+  poll @ 11:39:44  feed built     1s ago  new accessions:   2  tracked: 77
+  poll @ 11:39:58  feed built    13s ago  new accessions:   0  tracked: 77
+  poll @ 11:40:01  feed built     1s ago  new accessions:   2  tracked: 79
+  poll @ 11:40:08  feed built     8s ago  new accessions:   0  tracked: 79
+  poll @ 11:40:21  feed built     0s ago  new accessions:   1  tracked: 80
+  ! HTTPSConnectionPool(host='www.sec.gov', port=443): Read timed out. (read timeout=30)
+  poll @ 11:41:03  feed built     1s ago  new accessions:   9  tracked: 89
+  poll @ 11:41:18  feed built     0s ago  new accessions:   1  tracked: 90
+  poll @ 11:41:21  feed built     0s ago  new accessions:   0  tracked: 90
+  poll @ 11:41:29  feed built     1s ago  new accessions:   0  tracked: 90
+  poll @ 11:41:39  feed built     0s ago  new accessions:   0  tracked: 90
+  poll @ 11:41:42  feed built     1s ago  new accessions:   0  tracked: 90
+  poll @ 11:41:57  feed built    72s ago  new accessions:   0  tracked: 90
+  poll @ 11:42:00  feed built     1s ago  new accessions:   3  tracked: 93
+  poll @ 11:42:05  feed built     1s ago  new accessions:   0  tracked: 93
+  poll @ 11:42:11  feed built     1s ago  new accessions:   0  tracked: 93
+  poll @ 11:42:17  feed built     1s ago  new accessions:   0  tracked: 93
+  poll @ 11:42:20  feed built     1s ago  new accessions:   0  tracked: 93
+  poll @ 11:42:24  feed built     0s ago  new accessions:   0  tracked: 93
+  poll @ 11:42:27  feed built     0s ago  new accessions:   0  tracked: 93
+  poll @ 11:42:48  feed built    21s ago  new accessions:   0  tracked: 93
+  poll @ 11:42:56  feed built     0s ago  new accessions:   2  tracked: 95
+  poll @ 11:43:00  feed built    31s ago  new accessions:   0  tracked: 95
+  poll @ 11:43:03  feed built     1s ago  new accessions:   0  tracked: 95
+  poll @ 11:43:08  feed built     0s ago  new accessions:   0  tracked: 95
+  poll @ 11:43:12  feed built    25s ago  new accessions:   0  tracked: 95
+  poll @ 11:43:19  feed built     1s ago  new accessions:   2  tracked: 97
+  poll @ 11:43:23  feed built    -0s ago  new accessions:   0  tracked: 97
+  poll @ 11:43:27  feed built     0s ago  new accessions:   0  tracked: 97
+  poll @ 11:43:34  feed built     6s ago  new accessions:   0  tracked: 97
+  poll @ 11:43:38  feed built     0s ago  new accessions:   0  tracked: 97
+  poll @ 11:43:41  feed built     0s ago  new accessions:   0  tracked: 97
+  poll @ 11:43:44  feed built     0s ago  new accessions:   0  tracked: 97
+  poll @ 11:43:58  feed built    13s ago  new accessions:   0  tracked: 97
+
+  FEED-BUILD STALENESS: median 1s, min -0s, max 72s
+  That is how old the SEC's snapshot already is when it reaches you. Polling faster than
+  this interval re-downloads the identical snapshot and buys exactly zero milliseconds.
+
+  accessions observed: 97   appeared DURING the probe (usable): 23
+
+  ACCEPTANCE -> FIRST VISIBLE (seconds):
+    min      17   median      44   mean      47   max      85
+    in minutes:  median 0.7 min, worst 1.4 min
+
+  of those, carrying a price-moving item: 1 of 23
+       0.3 min  8-K - Federal Home Loan Bank of Topeka (0001325878) (Fil  Reg FD
+
+  item mix across everything observed:
+    Item 7.01     1  Reg FD
+    Item 9.01     1  routine
+
+==============================================================================================================
+TEST 3 — REACTION: is the move still there, and can $5,000 transact in it?
+==============================================================================================================
+  2026-09-24: 184 8-Ks -> 12 hard-material
+  2026-09-23: 177 8-Ks -> 15 hard-material
+  2026-09-22: 194 8-Ks -> 11 hard-material
+  2026-09-21: 174 8-Ks -> 9 hard-material
+  2026-09-18: 155 8-Ks -> 20 hard-material
+  2026-09-17: 185 8-Ks -> 11 hard-material
+  2026-09-16: 185 8-Ks -> 14 hard-material
+
+  hard-material 8-Ks found: 92   of which accepted intraday: 13
+
+ticker        when         items  lost_bp  cap_1m_bp  cap_2m_bp  cap_5m_bp  cap_15m_bp  cap_30m_bp  vol_x  min_$vol  day_$vol  spread_bp
+   TRT 09-24 11:32      EARNINGS    -25.4     -152.7     -330.8     -241.7      -203.6      -330.8    0.5     58738   6178665       88.9
+  APOG 09-23 15:52 M&A completed     -8.2      -31.2      -40.7        5.4       -13.6      -201.0    4.2    188814   5173161       16.3
+   EBF 09-21 09:56      EARNINGS    -23.4       37.4       28.1       93.5        16.4       -37.4    1.6     45881   2737258       28.1
+   PBT 09-18 11:48      EARNINGS      0.0       79.6       35.5       35.5        22.7       105.1    0.1     12097   2924993        0.0
+   SJT 09-18 15:57      EARNINGS    -16.3       66.2        0.0       99.0       430.5       231.8    0.8     13028   1422779       24.9
+
+  n = 5 filings with usable bars
+
+  |move| in the acceptance minute — the window you are locked out of:
+    median   16.3 bp   mean   14.7 bp   max   25.4 bp
+  |move| available from t0+1 through t0+1 m: median   66.2 bp   -> lockout captured   20% of the 1-minute total
+  |move| available from t0+1 through t0+2 m: median   35.5 bp   -> lockout captured   31% of the 2-minute total
+  |move| available from t0+1 through t0+5 m: median   93.5 bp   -> lockout captured   15% of the 5-minute total
+  |move| available from t0+1 through t0+15m: median   22.7 bp   -> lockout captured   42% of the 15-minute total
+  |move| available from t0+1 through t0+30m: median  201.0 bp   -> lockout captured    8% of the 30-minute total
+
+  volume in the acceptance minute vs prior 30-minute average: median 0.8x
+  A multiple near or below 1.0 means the market did not notice the filing at all, which is
+  its own verdict: there is no reaction to be early to.
+
+  1-minute high-low range (spread proxy): median 24.9 bp
+  1-minute 'captured' move:                median 66.2 bp  -> move / spread = 2.66x
+
+  liquidity of the names that actually file hard 8-Ks intraday:
+    acceptance-minute dollar volume:  median $45,881
+    average daily dollar volume:      median $2,924,993
+    a $5,000 order is 11% of the dollar volume in the minute you would trade
+  This is the odd-lot problem in a new costume: the filings that arrive while the market is
+  open belong to names too small for anyone larger to bother with — and too small for the
+  price you see to survive your own order.
+
+==============================================================================================================
+LEG 2 VERDICT
+==============================================================================================================
+
+  Three measured constraints, each independently sufficient to cap the strategy below its goal:
+
+  POPULATION   92 hard-material 8-Ks in 7 trading days; 13 of them accepted inside 09:30-16:00 ET.
+               That is ~1 per day market-wide, and only ~5 of the 13 map to a listed common stock with
+               usable 1-minute bars. Call it 130-250 opportunities a year BEFORE any filter on whether
+               the filing is actually directional. 56.5% of hard filings go out after the close on
+               purpose, which is not an accident of scheduling — it is issuers choosing to let an
+               auction absorb the news rather than a scramble.
+
+  LATENCY      Acceptance to first-visible on the public feed: median 39s, range 31-60s (n=14). The feed
+               snapshot itself is only ~1s old when it arrives, so the delay is inside the SEC's
+               pipeline, not in the poller. Polling faster re-downloads an identical document. The
+               original premise was a 3-SECOND head start over retail; the real figure is forty seconds
+               in the wrong direction, and the comparison is worse than that, because an issuer pushes
+               its press release to Business Wire at the same instant it files. The wire reaches
+               Bloomberg and every broker news panel with no queue at all. EDGAR is the slow mirror.
+
+  REACTION     Volume in the acceptance minute is 0.8x a normal minute — below average. The market does
+               not respond to these filings, so there is no reaction to be early to. The names that do
+               file hard 8-Ks intraday have ~$2.9M average daily dollar volume and ~$46k in the minute
+               you would be trading, making a $5,000 order 11% of that minute's flow. The subsequent
+               moves are large in percentage terms (-153bp to +80bp at one minute) but their SIGN is
+               unrelated to the item code, so they are volatility rather than edge.
+
+  The honest limit of this evidence: n=5 on the reaction test is far too small to estimate an expected
+  edge, and it is not being used to. The population and latency figures are what carry the verdict, and
+  those rest on 1,254 filings and 14 timed arrivals respectively. The reaction table is there to show
+  that the surviving candidates are illiquid microcaps and royalty trusts, which it does clearly.
+
+  WHAT WOULD CHANGE THE ANSWER, since none of the above is about skill. The 40-second lag disappears on
+  a paid direct feed and the population constraint disappears if you trade the OPEN rather than the
+  filing: 88% of hard 8-Ks land outside the session, so the tradeable expression is an overnight or
+  opening-auction position, not a millisecond race. That is a different strategy with a different edge —
+  slower, capacity-constrained by nothing, and testable on daily data going back years instead of seven
+  days. It is also the one this codebase is already set up to study.
+

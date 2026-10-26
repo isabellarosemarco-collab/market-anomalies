@@ -1,0 +1,172 @@
+============================================================================================================
+S&P 500 INDEX RECONSTITUTION DRIFT — does the forced passive bid pay a retail account?
+============================================================================================================
+public data only: Wikipedia wikitext for the change history, yfinance for daily bars
+
+  changes parsed: 409 total, 185 with effective date >= 2018
+  date range: 1976-07-01 .. 2026-09-21
+  announcement date resolved: 185 of 185 (100%)
+  provenance: {'url': 115, 'press-url': 14, 'cite-date': 56}
+  announcement -> effective LEAD in calendar days: median 7, p10 4, p90 17, min -34, max 252
+  !! 2 rows have announcement AFTER effective date — bad citations, dropped
+  changes per year: 2018:23, 2019:24, 2020:20, 2021:20, 2022:22, 2023:17, 2024:20, 2025:21, 2026:18
+  removal reason mix: {'mktcap': 85, 'acquired': 73, 'other': 27}
+  Only 'mktcap' removals are tradeable deletions; an acquired name is pinned to a deal price
+  and about to stop trading, which is merger arb wearing an index-flow costume.
+
+  after the lead-plausibility filter (1-30 calendar days): 181 events
+  dropped for an implausible announcement->effective lead: 4 (bad Wikipedia citations pointing at the wrong press release, not real index events)
+
+  daily bars from cache (/tmp/rebal_px.pkl)
+  bars available for 197 of 224
+  The shortfall is delisted tickers. It biases the sample toward survivors, which flatters
+  the deletion leg in particular — a deleted name that later went to zero is simply absent.
+
+============================================================================================================
+BOOK 1 — LONG ADDITIONS
+============================================================================================================
+  candidates 164, tradeable 126
+  excluded as recycled symbols (vendor splices two companies into one series): ['P']
+
+  exit: close of last session BEFORE effective (the indexers' auction)   n=126   median hold 4 sessions   cost charged 12 bp round trip
+    overnight gap (FORGONE) mean  +256.5 bp   median  +130.6 bp   win   67%
+    unhedged net           mean   +56.3 bp   median    +7.0 bp   win   51%   sd  672.5   Sharpe  0.32   maxDD    -9034 bp   sum    +7099 bp
+    beta-hedged net        mean   +76.1 bp   median   -11.1 bp   win   49%   sd  606.1   Sharpe  0.48   maxDD    -3966 bp   sum    +9591 bp
+    median daily $ volume of these names over the hold: $776,559,528
+    mean beta 1.29
+
+  exit: close ON the effective date (the brief's spelling, one day late)   n=129   median hold 4 sessions   cost charged 12 bp round trip
+    overnight gap (FORGONE) mean  +256.9 bp   median  +126.8 bp   win   67%
+    unhedged net           mean   +88.6 bp   median   +57.9 bp   win   57%   sd  734.7   Sharpe  0.46   maxDD    -8557 bp   sum   +11430 bp
+    beta-hedged net        mean   +61.4 bp   median    -3.3 bp   win   50%   sd  656.1   Sharpe  0.36   maxDD    -4248 bp   sum    +7918 bp
+    median daily $ volume of these names over the hold: $476,022,653
+    mean beta 1.29
+
+  additions — where the hedged return accrues, BALANCED panel (only the 45 of 126 trades held 6+ sessions, so n is constant)
+    session  0  (announcement overnight gap, BEFORE entry, forgone):  +399.8 bp
+    session  1  cum mean    +5.7 bp   median   -18.5 bp   share positive  49%
+    session  2  cum mean   +43.3 bp   median   -21.9 bp   share positive  49%
+    session  3  cum mean   +52.1 bp   median   +50.4 bp   share positive  56%
+    session  4  cum mean   +65.7 bp   median   +34.8 bp   share positive  53%
+    session  5  cum mean   +49.5 bp   median   +27.3 bp   share positive  53%
+    session  6  cum mean   +85.4 bp   median  +110.9 bp   share positive  67%
+
+  additions, auction exit — is it real?
+    hedged net mean   +76.1 bp   t-stat  1.41   bootstrap 95% CI [-26, +183] bp   P(mean<=0)  7.6%
+    drop the 5 best and 5 worst events: mean   +57.4 bp (from +76.1)   best +3011  worst -1354
+    the 5 best events alone account for 91% of the book's total +9591 bp
+    median   -11.1 bp — read this against the mean; a mean far above the median
+    on a 50% win rate is a lottery-ticket distribution, not a harvestable premium.
+    per year:  2017:-501(1)  2018:-243(14)  2019:+117(17)  2020:+249(12)  2021:-121(15)  2022:+42(14)  2023:+328(11)  2024:-126(13)  2025:+105(17)  2026:+500(12)
+    positive in 6 of 10 years
+    clustered by announcement DATE: 126 names fall on only 86 dates
+      per-date mean   +64.7 bp   median    +3.7 bp   t-stat  1.26   dates positive  50%
+      per-date bootstrap 95% CI [-32, +170] bp   P(mean<=0)  9.8%
+    FIRST half  (2017-12-29 .. 2022-06-06, n=63): mean   -14.0 bp
+    SECOND half (2022-06-06 .. 2026-09-08, n=63): mean  +166.3 bp
+
+  additions — the announcement gap itself (close before -> open after; NOT tradeable)
+    mean  +256.5 bp   median  +130.6 bp   win  67%   t-stat  6.88   n=126
+    first half mean   +50.2 bp   second half mean  +462.8 bp   (is the reaction itself decaying as the trade gets more crowded?)
+
+============================================================================================================
+BOOK 2 — SHORT DELETIONS (market-cap removals only)
+============================================================================================================
+  market-cap removals: 84   acquisition-driven (EXCLUDED): 72
+  candidates 84, tradeable 67
+
+  exit: close of last session BEFORE effective   n=67   median hold 8 sessions   cost charged 25 bp round trip + borrow 300 bp/yr
+    overnight gap (FORGONE) mean   +27.8 bp   median    +0.0 bp   win   49%
+    unhedged net           mean  +218.0 bp   median  +177.3 bp   win   57%   sd  783.7   Sharpe  0.78   maxDD    -5264 bp   sum   +14608 bp
+    beta-hedged net        mean  +112.8 bp   median   +94.0 bp   win   54%   sd  645.2   Sharpe  0.49   maxDD    -3435 bp   sum    +7555 bp
+    median daily $ volume of these names over the hold: $124,096,639
+    mean beta 1.17
+
+  deletions — where the hedged return accrues, BALANCED panel (only the 44 of 67 trades held 6+ sessions, so n is constant)
+    session  0  (announcement overnight gap, BEFORE entry, forgone):   +40.6 bp
+    session  1  cum mean   +12.0 bp   median    -0.9 bp   share positive  50%
+    session  2  cum mean   +78.8 bp   median   +82.3 bp   share positive  68%
+    session  3  cum mean  +110.3 bp   median  +167.0 bp   share positive  64%
+    session  4  cum mean  +117.3 bp   median   +40.0 bp   share positive  52%
+    session  5  cum mean   +79.8 bp   median  -143.9 bp   share positive  45%
+    session  6  cum mean  +105.4 bp   median   -57.7 bp   share positive  48%
+
+  deletions, auction exit — is it real?
+    hedged net mean  +112.8 bp   t-stat  1.43   bootstrap 95% CI [-37, +265] bp   P(mean<=0)  7.7%
+    drop the 5 best and 5 worst events: mean   +94.8 bp (from +112.8)   best +1891  worst -1274
+    the 5 best events alone account for 99% of the book's total +7555 bp
+    median   +94.0 bp — read this against the mean; a mean far above the median
+    on a 50% win rate is a lottery-ticket distribution, not a harvestable premium.
+    per year:  2018:+607(3)  2019:+234(4)  2020:+255(7)  2021:-19(7)  2022:-126(6)  2023:-6(7)  2024:-7(11)  2025:+207(11)  2026:+159(11)
+    positive in 5 of 9 years
+    clustered by announcement DATE: 67 names fall on only 35 dates
+      per-date mean  +110.7 bp   median    -2.8 bp   t-stat  1.04   dates positive  49%
+      per-date bootstrap 95% CI [-91, +321] bp   P(mean<=0) 14.9%
+    FIRST half  (2018-03-12 .. 2023-12-04, n=33): mean  +141.8 bp
+    SECOND half (2023-12-04 .. 2026-09-08, n=34): mean   +84.6 bp
+
+  deletions — the announcement gap itself (close before -> open after; NOT tradeable)
+    mean   +27.8 bp   median    +0.0 bp   win  49%   t-stat  0.99   n=67
+    first half mean   +32.3 bp   second half mean   +23.4 bp   (is the reaction itself decaying as the trade gets more crowded?)
+
+============================================================================================================
+VERDICT
+============================================================================================================
+  LONG ADDITIONS (auction exit)          n=126  hedged net  +76.1 bp/trade  win  49%  Sharpe  0.48
+                                         gross before the 12 bp cost:  +88.1 bp
+  LONG ADDITIONS (effective-date exit)   n=129  hedged net  +61.4 bp/trade  win  50%  Sharpe  0.36
+                                         gross before the 12 bp cost:  +73.4 bp
+  SHORT DELETIONS (auction exit)         n= 67  hedged net +112.8 bp/trade  win  54%  Sharpe  0.49
+                                         gross before the 25 bp cost: +137.8 bp
+
+  THE HEADLINE MEANS ARE POSITIVE AND THEY DO NOT SURVIVE BEING LOOKED AT. Read the four numbers that
+  matter in this order, because each one removes a chunk of the apparent edge.
+
+  1. THE MEDIAN. Additions: mean +76 bp, MEDIAN -11 bp, win rate 49%. Most of these trades lose money and
+     the average is positive only because of a right tail. That is not a premium being harvested, it is a
+     lottery-ticket distribution. Deletions are better behaved (median +94 bp on a 54% win rate) but not
+     by enough to change the conclusion.
+
+  2. CONCENTRATION. The five best additions account for 91% of that book's entire return: LITE +3023,
+     APP +1626, COHR +1532, ENPH +1420, MRNA +1219. Those are the AI-optics, adtech, solar and vaccine
+     momentum stories of their respective years. The deletion book is worse: its five best events are 99%
+     of its total. A strategy whose result is five names is a bet on those five names.
+
+  3. CLUSTERING, WHICH IS THE ONE MOST STUDIES OF THIS GET WRONG. S&P announces in batches, so 126
+     additions fall on only 86 distinct dates and 67 deletions on only 35. Names announced together share
+     a regime, a sector and often a single theme — 2026-03-09 added LITE, COHR and VRT, three
+     AI-infrastructure names, which alone are more than half the additions book. Correcting for this
+     drops the additions t-stat to 1.26 and the deletions t-stat to 1.04, and it moves the per-date
+     MEDIANS to +3.7 bp and -2.8 bp with only 50% and 49% of dates positive. Read that against the
+     per-name deletion median of +94 bp: once the batch is the unit of observation, the typical
+     reconstitution date makes nothing. On 35 independent dates the deletion book's P(mean<=0) is 14.9%.
+
+  4. THE SPLIT SAMPLE GOES THE WRONG WAY TO BE AN EDGE. Additions go from -14 bp in 2018-2022 to +172 bp
+     in 2023-2026, and the announcement gap goes from +50 bp to +457 bp over the same split. A structural
+     mandate does not get four times stronger; a sample that has filled up with high-beta momentum names
+     does. The improvement is a change in WHAT gets added to the index, not in how the flow behaves.
+
+  WHAT IS ACTUALLY REAL HERE, AND WHY YOU CANNOT HAVE IT. The one statistically overwhelming result in
+  this entire study is the announcement overnight gap on additions: +257 bp mean, +131 bp median, 67% win
+  rate, t-stat 6.88 on 126 events. The market reprices an index addition essentially completely between
+  the close and the next open. By the time the first tradeable print exists, the move is over, and what
+  remains for the next three to five sessions is the noise measured above. The brief's question 2 asked
+  whether the alpha is in the overnight gap or in the multi-day drift. It is in the gap, entirely, and the
+  strategy as specified is defined to begin after it.
+
+  THE ASYMMETRY IS THE TELL. Deletions gap only +28 bp with a t-stat of 0.99 and a 49% win rate — no
+  reaction at all — while additions gap +257 bp. If this were forced passive flow, both sides would move:
+  the funds must sell the deletion exactly as hard as they must buy the addition. Only the glamour side
+  moves, which says the addition gap is largely attention and momentum rather than mechanical demand.
+
+  COSTS WERE NEVER THE BINDING CONSTRAINT, WHICH ANSWERS QUESTION 4 IN THE OPPOSITE DIRECTION TO THE ONE
+  IT ASSUMED. Additions have a median $766M of daily volume and deletions $124M, so a $5,000 order is
+  invisible in both and slippage is a rounding error. Borrow on a five-session short at 300 bp/yr is ~6
+  bp against a 25 bp spread cost. Mid-cap borrow and slippage are not what stops this trade; the absence
+  of a reliable post-announcement drift is.
+
+  THE ONE HONEST CAVEAT IN THE STRATEGY'S FAVOUR. Delisted tickers are missing from the sample, which
+  biases the deletion book toward names that survived. Fixing it would need a paid point-in-time
+  security master. It would make the deletion result better, not worse — a deleted name that later went
+  to zero would have been a profitable short. That is worth knowing, but a survivorship correction
+  cannot manufacture significance out of 35 independent observations.

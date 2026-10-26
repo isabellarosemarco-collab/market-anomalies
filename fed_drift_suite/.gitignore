@@ -1,0 +1,12 @@
+# Secrets — never commit these.
+.env
+subscriptions.json          # client webhook signing secrets
+state.json                  # open-position state
+
+# Logs and local noise
+*.log
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+build.log

@@ -1,0 +1,73 @@
+KALSHI / PREDICTION-MARKET LATENCY ARBITRAGE — falsification run
+all endpoints public and unauthenticated; no API key exists in this codebase
+
+================================================================================================================
+TEST 1 — THE GATE: is the market open at the moment of its own release?
+================================================================================================================
+         series   n closes_ET release_ET halts_before_by window?                                                                                                                                                                                                            note
+       KXCPIYOY  47  08:29:00   08:30:00           1 min    NONE                                                                                                                                                                            BLS CPI; unanimous across 47 markets
+      KXCPICORE  22  08:25:00   08:30:00           5 min    NONE                                                                                                                                                                       BLS core CPI; unanimous across 22 markets
+      KXCPINDEX  43  08:29:00   08:30:00           1 min    NONE                                                                                                                                                                    BLS CPI-U index; unanimous across 43 markets
+   KXCPICOREYOY  30  08:25:00   08:30:00           5 min    NONE                                                                                                                                                                   BLS core CPI YoY; unanimous across 30 markets
+     KXPAYROLLS  32  08:29:00   08:30:00           1 min    NONE                                                                                                                                                               BLS nonfarm payrolls; unanimous across 32 markets
+           KXU3  28  08:29:00   08:30:00           1 min    NONE                                                                                                                                                              BLS unemployment rate; unanimous across 28 markets
+           KXUE 163  07:55:00   08:30:00          35 min    NONE BLS unemployment rate; close times not uniform: {'07:55:00': 37, '21:25:00': 30, '22:06:52': 11, '08:25:00': 20, '11:45:40': 10, '03:50:00': 20, '11:55:00': 12, '21:55:00': 11, '04:25:00': 11, '08:29:04': 1}
+KXJOBLESSCLAIMS 104  08:25:00   08:30:00           5 min    NONE                                                                                                                                                                DOL initial claims; unanimous across 104 markets
+   KXCONTCLAIMS  55  08:29:00   08:30:00           1 min    NONE                                                                                                                                                              DOL continuing claims; unanimous across 55 markets
+      KXPCECORE  10  08:25:00   08:30:00           5 min    NONE                                                                                                                                                                       BEA core PCE; unanimous across 10 markets
+          KXFED  22  13:55:00   14:00:00           5 min    NONE                                                                                                                                                                     FOMC statement; unanimous across 22 markets
+
+  series with ANY tradeable window through the release: 0 of 11
+  Every scheduled macro contract halts before its own print. There is no latency race to
+  win here — the order cannot be submitted at all. Scheduled-macro fast-feed arb is dead
+  for structural reasons, not competitive ones, and no amount of speed changes it.
+
+================================================================================================================
+TEST 2 — CAPACITY: unscheduled-event markets DO stay open. How much money fits?
+================================================================================================================
+  unscheduled headline-driven markets found: 5
+                                               event  days_out  yes_touch  yes_near$  no_touch  no_near$  junk$
+Will SCOTUS recognize a right to possess AR-15-style      1193       0.77        154      0.17        35     41
+Will a court rule Visa violated antitrust law on deb      1193       0.58        116      0.32        64      1
+  A Court Of Thorns and Roses: Released before 2030?      1193       0.04         34      0.38         2    127
+                       Kevin Warsh out as Fed chair?      1193       0.11         32      0.85       425      6
+                       Kevin Warsh out as Fed chair?       828       0.04          3      0.89       445     11
+
+  TOTAL real depth within 5c of touch across all 5 markets: $1,310
+  TOTAL penny-level junk resting in the same books:                  $186
+  The junk column is why these books look deep and are not. A 1-cent bid is a lottery
+  ticket, not liquidity you can sell size into when the ruling drops.
+
+================================================================================================================
+TEST 3 — VELOCITY: what is actually being traded on this exchange?
+================================================================================================================
+  last 1000 trades spanned 7.3s  ->  138 trades/sec exchange-wide
+  notional across all of them: $17,007  (mean $17.01 per trade)
+
+  where the volume actually is (series prefix, share of trades):
+    KXBTC15M                      26.8%
+    KXITFMATCH                    11.1%
+    KXMVECROSSCATEGORY             9.5%
+    KXBTCD                         5.3%
+    KXWTAMATCH                     5.2%
+    KXETH15M                       3.2%
+    KXAFCONTOTAL                   2.8%
+    KXATPCHALLENGERMATCH           2.4%
+
+  Read the mean trade size before anything else. This is a venue of ~$20 tickets, and the
+  flow concentrates in 15-minute crypto price markets — high-frequency scalping, not news.
+
+================================================================================================================
+LEG 2 — SEC EDGAR 8-K ENGINE: the one that survives the gate
+================================================================================================================
+  Equities have no pre-close mechanism. A market-moving 8-K hits EDGAR while the stock is
+  continuously tradeable, so unlike Kalshi macro there IS a window by construction. That
+  makes it the better leg, and `special_sits/edgar_scanner.py` already has the fetch,
+  backoff and rate-limit discipline to build on.
+  The binding constraint is different and must be measured first: EDGAR's own dissemination
+  lag. Filings appear in the full-text index minutes to hours after acceptance, and the
+  paid direct feeds that professionals use are the reason. Before writing a parser, measure
+  acceptance-timestamp vs index-availability on real 8-Ks — that delta is the whole edge and
+  it is not something a faster poller can shrink.
+  Second constraint, worth knowing now: free intraday equity history is ~7 days of 1-minute
+  bars, so the reaction study has to run forward from today rather than backward over a year.
